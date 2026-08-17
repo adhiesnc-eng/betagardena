@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>GARDENA - Garda Terdepan Nakes Sampanahan</title>
     
-    <!-- FIREBASE SDK COMPAT -->
+    <!-- FIREBASE SDK COMPAT (v9) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -1080,11 +1080,11 @@
 <script>
     const APP_VERSION = "1.2.7";[cite: 1]
     
-    // Inisialisasi Firebase Project gardena-4a8b1
+    // Inisialisasi Firebase Realtime Database Regional Singapura (asia-southeast1)
     const firebaseConfig = {
       apiKey: "AIzaSyACFiHVAuYvWl_q02agK4PFB2gZ8hLwr_A",
       authDomain: "gardena-4a8b1.firebaseapp.com",
-      databaseURL: "https://gardena-4a8b1-default-rtdb.firebaseio.com",
+      databaseURL: "https://gardena-4a8b1-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "gardena-4a8b1",
       storageBucket: "gardena-4a8b1.firebasestorage.app",
       messagingSenderId: "890326272479",
@@ -1101,7 +1101,7 @@
     const ADMIN_PASSWORD = "12345";[cite: 1]
 
     let state = { 
-        user: localStorage.getItem('gardena_user') || null,[cite: 1]
+        user: localStorage.getItem('gardena_user') || null, 
         data: { officers: [], logs: [], config: { QR_TEXT: "PKM-SAMPANAHAN", THRESHOLD: "0.1" }, descriptors: [] },[cite: 1]
         stream: null,[cite: 1]
         modelsLoaded: false,[cite: 1]
@@ -1256,11 +1256,11 @@
             if (textMain) textMain.innerText = "GPS TIDAK AKTIF";[cite: 1]
             if (dotMain) dotMain.className = "geo-dot-main inactive";[cite: 1]
             const p = document.getElementById('profile-gps-text');[cite: 1]
-            if(p) p.innerText = "OFFLINE";  [cite: 1]
+            if(p) p.innerText = "OFFLINE"; [cite: 1]
         }, { 
             enableHighAccuracy: true,[cite: 1]
-            timeout: 10000,       [cite: 1]
-            maximumAge: 30000     [cite: 1]
+            timeout: 10000,      [cite: 1]
+            maximumAge: 30000    [cite: 1]
         });
     }
 
@@ -1272,7 +1272,7 @@
         if(title === "Gagal" || title === "Ditolak" || title === "Opps") { soundError(); triggerHaptic("error"); }[cite: 1]
         else if (title === "Berhasil") { 
             soundSuccess();  [cite: 1]
-            triggerHaptic("success"); [cite: 1]
+            triggerHaptic("success");[cite: 1]
             if (msg.includes("Dicatat")) speakSuccess();[cite: 1]
         }
         else { triggerHaptic("confirm"); }[cite: 1]
@@ -1283,13 +1283,13 @@
         const loadingTextEl = document.getElementById('loading-text');[cite: 1]
         if (loadingTextEl) loadingTextEl.innerText = text;[cite: 1]
         const overlay = document.getElementById('loading-overlay');[cite: 1]
-        if(overlay) overlay.classList.toggle('hidden', !show); [cite: 1]
+        if(overlay) overlay.classList.toggle('hidden', !show);[cite: 1]
     }
 
     async function loadModels() {
         if (state.modelsLoaded) return;[cite: 1]
         try {
-            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models'; [cite: 1]
+            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';[cite: 1]
             await Promise.all([
                 faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),[cite: 1]
                 faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),[cite: 1]
@@ -1302,7 +1302,7 @@
     }
 
     // ==========================================
-    // SINKRONISASI REALTIME KE FIREBASE
+    // SINKRONISASI REALTIME FIREBASE RTDB
     // ==========================================
     function initFirebaseListeners() {
         db.ref('GARDENA').on('value', (snapshot) => {
@@ -1320,7 +1320,7 @@
             const maintenanceModal = document.getElementById('modal-maintenance');
             if (maintenanceModal) maintenanceModal.classList.toggle('hidden', !isMT);
 
-            // 2. Officers & Face Descriptors
+            // 2. Officers & Descriptors
             const officerObj = val.OFFICERS || {};
             const officersList = [];
             const descriptorsList = [];
@@ -1332,7 +1332,7 @@
             state.data.officers = officersList;
             state.data.descriptors = descriptorsList;
 
-            // 3. Logs Presensi
+            // 3. Attendance Logs
             const logsObj = val.DATA || {};
             state.data.logs = Object.keys(logsObj).map(k => logsObj[k]);
 
@@ -1343,6 +1343,9 @@
                 updateProfileInfo(); 
                 renderShiftInfo(); 
             }
+        }, (error) => {
+            console.error("Firebase Sync Error:", error);
+            showAlert("Error", "Gagal menghubungkan ke database Firebase.");
         });
     }
 
@@ -1374,13 +1377,13 @@
             showAlert("Berhasil", "Data disinkronkan ✨");[cite: 1]
         } catch(e) {
             soundError();[cite: 1]
-            showAlert("Gagal", "Gagal sinkron data.");[cite: 1]
+            showAlert("Gagal", "Gagal sinkron data: " + e.message);
         } finally {
             state.isRefreshing = false;[cite: 1]
             if(btn) setTimeout(() => btn.classList.remove('spinning'), 500);[cite: 1]
             if(state.currentView === 'profile') {[cite: 1]
-                renderDailyLog();  [cite: 1]
-                renderShiftInfo(); [cite: 1]
+                renderDailyLog(); [cite: 1]
+                renderShiftInfo();[cite: 1]
             }
         }
     }
@@ -1416,7 +1419,7 @@
         const nav = document.getElementById('main-nav');[cite: 1]
         const fab = document.getElementById('fab-scan-qr');[cite: 1]
         if(viewName === 'login') {[cite: 1]
-            if(nav) nav.classList.add('hidden'); [cite: 1]
+            if(nav) nav.classList.add('hidden');[cite: 1]
             if(fab) fab.classList.add('hidden');[cite: 1]
         } else {
             if(nav) nav.classList.remove('hidden');[cite: 1]
@@ -1424,11 +1427,11 @@
                 fab.classList.toggle('hidden', viewName !== 'profile');[cite: 1]
             }
             if(viewName === 'rekap') { setFilterDefault(); renderRekap(); }[cite: 1]
-            if(viewName === 'profile') { [cite: 1]
-                updateProfileInfo(); [cite: 1]
-                renderDailyLog(); [cite: 1]
+            if(viewName === 'profile') {[cite: 1]
+                updateProfileInfo();[cite: 1]
+                renderDailyLog();[cite: 1]
                 renderShiftInfo();[cite: 1]
-                startGeoMonitoring(); [cite: 1]
+                startGeoMonitoring();[cite: 1]
             }
         }
     }
@@ -1460,7 +1463,7 @@
             return l.name === state.user && p[1] === month && p[2] === year;[cite: 1]
         });
         const daysPresent = new Set(monthlyLogs.map(l => l.date)).size;[cite: 1]
-        const workDays = 22;  [cite: 1]
+        const workDays = 22; [cite: 1]
         const pct = Math.min(Math.round((daysPresent / workDays) * 100), 100);[cite: 1]
         const pctEl = document.getElementById('monthly-attendance-pct');[cite: 1]
         if(pctEl) pctEl.innerText = pct + "%";[cite: 1]
@@ -1474,7 +1477,7 @@
         const badgeText = document.getElementById('session-badge-text');[cite: 1]
         const countdownEl = document.getElementById('countdown-pulang');[cite: 1]
         const now = new Date();[cite: 1]
-        const day = now.getDay(); [cite: 1]
+        const day = now.getDay();[cite: 1]
         const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];[cite: 1]
         if(titleEl) titleEl.innerText = `Jadwal Hari ${dayNames[day]}`;[cite: 1]
         if (day === 0 || day === 6) {[cite: 1]
@@ -1630,30 +1633,30 @@
     }
 
     function handleFilterChange(trigger) { 
-        if (trigger === 'date') { [cite: 1]
+        if (trigger === 'date') {[cite: 1]
             const dV = document.getElementById('filter-tanggal');[cite: 1]
-            const dateVal = dV ? dV.value : ""; [cite: 1]
-            if (dateVal) { [cite: 1]
-                const d = new Date(dateVal); [cite: 1]
+            const dateVal = dV ? dV.value : "";[cite: 1]
+            if (dateVal) {[cite: 1]
+                const d = new Date(dateVal);[cite: 1]
                 const fB = document.getElementById('filter-bulan');[cite: 1]
                 const fT = document.getElementById('filter-tahun');[cite: 1]
-                if(fB) fB.value = (d.getMonth() + 1).toString().padStart(2, '0'); [cite: 1]
-                if(fT) fT.value = d.getFullYear().toString(); [cite: 1]
+                if(fB) fB.value = (d.getMonth() + 1).toString().padStart(2, '0');[cite: 1]
+                if(fT) fT.value = d.getFullYear().toString();[cite: 1]
             } 
         } else if (trigger === 'month' || trigger === 'year') {[cite: 1]
             const fD = document.getElementById('filter-tanggal');[cite: 1]
             if (fD) fD.value = "";[cite: 1]
         }
-        renderRekap(); [cite: 1]
+        renderRekap();[cite: 1]
     }
 
     function renderRekap() {
         const tbody = document.getElementById('rekap-table-body');[cite: 1]
         if(!tbody) return;[cite: 1]
         
-        const filterBulan = document.getElementById('filter-bulan').value;  [cite: 1]
+        const filterBulan = document.getElementById('filter-bulan').value; [cite: 1]
         const filterTahun = document.getElementById('filter-tahun').value;[cite: 1]
-        const filterTanggal = document.getElementById('filter-tanggal').value; [cite: 1]
+        const filterTanggal = document.getElementById('filter-tanggal').value;[cite: 1]
         const filterStatus = document.getElementById('filter-status').value;[cite: 1]
         
         const grouped = {};[cite: 1]
@@ -1672,17 +1675,17 @@
 
         state.data.logs.forEach(l => {[cite: 1]
             if (l.name !== state.user) return;[cite: 1]
-            const dateParts = l.date.split('/'); [cite: 1]
+            const dateParts = l.date.split('/');[cite: 1]
             if (dateParts.length < 3) return;[cite: 1]
             
-            const logDay = dateParts[0].padStart(2, '0'); [cite: 1]
-            const logMonth = dateParts[1].padStart(2, '0'); [cite: 1]
+            const logDay = dateParts[0].padStart(2, '0');[cite: 1]
+            const logMonth = dateParts[1].padStart(2, '0');[cite: 1]
             const logYear = dateParts[2];[cite: 1]
             
-            if (formattedDateFilter) { [cite: 1]
-                if (l.date !== formattedDateFilter) return; [cite: 1]
+            if (formattedDateFilter) {[cite: 1]
+                if (l.date !== formattedDateFilter) return;[cite: 1]
             } else { 
-                if (logMonth !== filterBulan || logYear !== filterTahun) return; [cite: 1]
+                if (logMonth !== filterBulan || logYear !== filterTahun) return;[cite: 1]
             }
             
             if (filterStatus !== "SEMUA") {[cite: 1]
@@ -1692,14 +1695,14 @@
             }
             
             const key = `${l.date}_${l.name}`;[cite: 1]
-            if (!grouped[key]) { [cite: 1]
-                grouped[key] = { [cite: 1]
-                    name: l.name, [cite: 1]
-                    date: l.date, [cite: 1]
-                    masuk: "-", [cite: 1]
-                    pulang: "-", [cite: 1]
-                    ket: "-", [cite: 1]
-                    timestamp: new Date(logYear, parseInt(logMonth) - 1, parseInt(logDay)).getTime() [cite: 1]
+            if (!grouped[key]) {[cite: 1]
+                grouped[key] = {[cite: 1]
+                    name: l.name,[cite: 1]
+                    date: l.date,[cite: 1]
+                    masuk: "-",[cite: 1]
+                    pulang: "-",[cite: 1]
+                    ket: "-",[cite: 1]
+                    timestamp: new Date(logYear, parseInt(logMonth) - 1, parseInt(logDay)).getTime()[cite: 1]
                 }; 
             }
             
@@ -1707,10 +1710,10 @@
             if (l.type === "MASUK") grouped[key].masuk = fixedTime;[cite: 1]
             if (l.type === "PULANG") grouped[key].pulang = fixedTime;[cite: 1]
             
-            if (["DL", "CUTI", "IJIN", "SAKIT"].includes(l.type)) { [cite: 1]
-                grouped[key].masuk = l.type; [cite: 1]
-                grouped[key].pulang = l.type; [cite: 1]
-                grouped[key].ket = l.note || l.type; [cite: 1]
+            if (["DL", "CUTI", "IJIN", "SAKIT"].includes(l.type)) {[cite: 1]
+                grouped[key].masuk = l.type;[cite: 1]
+                grouped[key].pulang = l.type;[cite: 1]
+                grouped[key].ket = l.note || l.type;[cite: 1]
             }
             if (l.status && l.status.includes("TERLAMBAT")) grouped[key].ket = l.status;[cite: 1]
         });
@@ -1760,7 +1763,7 @@
         state.adminTriggerCount++;[cite: 1]
         triggerHaptic("confirm");[cite: 1]
         if (state.adminTriggerCount >= 3) {[cite: 1]
-            state.adminModeEnabled = !state.adminModeEnabled; [cite: 1]
+            state.adminModeEnabled = !state.adminModeEnabled;[cite: 1]
             state.adminTriggerCount = 0;[cite: 1]
             soundSuccess();[cite: 1]
             if (state.adminModeEnabled) {[cite: 1]
@@ -1792,14 +1795,14 @@
     async function getCameraStream(targetId) {
         try {
             const videoEl = document.getElementById(targetId);[cite: 1]
-            videoEl.classList.remove('visible'); [cite: 1]
+            videoEl.classList.remove('visible');[cite: 1]
             
-            if (state.stream) { [cite: 1]
-                state.stream.getTracks().forEach(track => track.stop()); [cite: 1]
+            if (state.stream) {[cite: 1]
+                state.stream.getTracks().forEach(track => track.stop());[cite: 1]
             }
 
             const constraints = { 
-                video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } } [cite: 1]
+                video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }[cite: 1]
             };
             
             state.stream = await navigator.mediaDevices.getUserMedia(constraints);[cite: 1]
@@ -1807,8 +1810,8 @@
 
             return new Promise((resolve) => {
                 videoEl.onloadedmetadata = () => { 
-                    videoEl.play(); [cite: 1]
-                    videoEl.classList.add('visible'); [cite: 1]
+                    videoEl.play();[cite: 1]
+                    videoEl.classList.add('visible');[cite: 1]
                     resolve(true); 
                 };
             });
@@ -1826,9 +1829,9 @@
         const isCentered = (centerX > videoWidth * 0.22 && centerX < videoWidth * 0.78) && (centerY > videoHeight * 0.22 && centerY < videoHeight * 0.78);[cite: 1]
         let targetScale = 1.0;[cite: 1]
         const faceWidthRatio = width / videoWidth;[cite: 1]
-        if (faceWidthRatio < 0.28) targetScale = 2.0; [cite: 1]
-        else if (faceWidthRatio > 0.58) targetScale = 0.8; [cite: 1]
-        else targetScale = 1.2; [cite: 1]
+        if (faceWidthRatio < 0.28) targetScale = 2.0;[cite: 1]
+        else if (faceWidthRatio > 0.58) targetScale = 0.8;[cite: 1]
+        else targetScale = 1.2;[cite: 1]
         if (!isCentered) return { aligned: false, status: "POSISIKAN WAJAH DI TENGAH LAYAR", scale: targetScale, css: "invalid" };[cite: 1]
         if (width < videoWidth * 0.25) return { aligned: false, status: "TERLALU JAUH! MENDEKAT KE KAMERA", scale: targetScale, css: "invalid" };[cite: 1]
         if (width > videoWidth * 0.65) return { aligned: false, status: "TERLALU DEKAT! MUNDUR SEDIKIT", scale: targetScale, css: "invalid" };[cite: 1]
@@ -1841,11 +1844,11 @@
         }
 
         const now = new Date();[cite: 1]
-        const day = now.getDay(); [cite: 1]
+        const day = now.getDay();[cite: 1]
         if (day === 0 || day === 6) return { allow: false, msg: "Hari ini libur (Sabtu/Minggu)." };[cite: 1]
-        const currentTime = now.getHours() * 60 + now.getMinutes(); [cite: 1]
+        const currentTime = now.getHours() * 60 + now.getMinutes();[cite: 1]
         const cfg = state.data.config || {};[cite: 1]
-        if (!cfg.SHIFT_DATA) return { allow: true }; [cite: 1]
+        if (!cfg.SHIFT_DATA) return { allow: true };[cite: 1]
         const shift = typeof cfg.SHIFT_DATA === 'string' ? JSON.parse(cfg.SHIFT_DATA) : cfg.SHIFT_DATA;[cite: 1]
         const isFriday = (day === 5);[cite: 1]
         const data = isFriday ? shift.fri : shift.reg;[cite: 1]
@@ -1861,8 +1864,8 @@
         const isPulangTime = currentTime >= outStart && currentTime <= outEnd;[cite: 1]
         if (isMasukTime) return { allow: true, type: "MASUK" };[cite: 1]
         if (isPulangTime) return { allow: true, type: "PULANG" };[cite: 1]
-        let msg = (currentTime < inStart) ? `Sesi belum dibuka. Kembali jam ${data.inStart}.` : [cite: 1]
-                  (currentTime > inLateLimit && currentTime < outStart) ? `Batas terlambat lewat. Pulang jam ${data.outStart}.` : [cite: 1]
+        let msg = (currentTime < inStart) ? `Sesi belum dibuka. Kembali jam ${data.inStart}.` :[cite: 1]
+                  (currentTime > inLateLimit && currentTime < outStart) ? `Batas terlambat lewat. Pulang jam ${data.outStart}.` :[cite: 1]
                   (currentTime > outEnd) ? "Sesi hari ini ditutup." : "Bukan jadwal absensi.";[cite: 1]
         return { allow: false, msg: msg };[cite: 1]
     }
@@ -1901,7 +1904,7 @@
         const val = document.getElementById('select-user').value;[cite: 1]
         if (mode === 'LOGIN' && val === 'NEW_REGISTER') return openRegister();[cite: 1]
         if (mode === 'LOGIN' && val === 'ADMIN') return openAdminLogin();[cite: 1]
-        if(!state.modelsLoaded) { showLoading(true, "Menyiapkan ..."); await loadModels(); showLoading(false); }[cite: 1]
+        if(!state.modelsLoaded) { showLoading(true, "Menyiapkan AI..."); await loadModels(); showLoading(false); }
         document.getElementById('face-modal-title').innerText = mode === 'LOGIN' ? "Verifikasi Masuk" : "Verifikasi Absensi";[cite: 1]
         
         const loginOval = document.getElementById('login-oval');[cite: 1]
@@ -1942,14 +1945,14 @@
             if(oval) { oval.classList.remove('invalid'); oval.classList.add('valid'); }[cite: 1]
             
             if (state.authMode === 'ABSENSI') {[cite: 1]
-                confirmFaceAuth();  [cite: 1]
+                confirmFaceAuth(); [cite: 1]
                 return; 
             }
             if(btn) { btn.disabled = false; btn.innerText = "KENALI SAYA & MASUK"; }[cite: 1]
         } else {
-            if(oval) { [cite: 1]
-                oval.classList.remove('valid'); [cite: 1]
-                if (detection) oval.classList.add('invalid'); [cite: 1]
+            if(oval) {[cite: 1]
+                oval.classList.remove('valid');[cite: 1]
+                if (detection) oval.classList.add('invalid');[cite: 1]
                 else oval.classList.remove('invalid');[cite: 1]
             }
             if(btn) { btn.disabled = true; btn.innerText = "MENCARI WAJAH..."; }[cite: 1]
@@ -1962,9 +1965,9 @@
         const btn = document.getElementById('btn-face-action');[cite: 1]
         if(btn) btn.disabled = true;[cite: 1]
         let selectedUser = document.getElementById('select-user').value;[cite: 1]
-        const threshold = state.authMode === 'ABSENSI' [cite: 1]
-            ? (parseFloat(state.data.config.THRESHOLD_ABSEN) || 0.1) [cite: 1]
-            : (parseFloat(state.data.config.THRESHOLD_LOGIN) || 0.1);[cite: 1]
+        const threshold = state.authMode === 'ABSENSI' 
+            ? (parseFloat(state.data.config.THRESHOLD_ABSEN) || 0.45) 
+            : (parseFloat(state.data.config.THRESHOLD_LOGIN) || 0.45);
         try {
             let matchedUser = null;[cite: 1]
             if (state.authMode === 'ABSENSI') {[cite: 1]
@@ -1979,13 +1982,13 @@
                 }
             }
             if (matchedUser) {[cite: 1]
-                closeFaceModal(); [cite: 1]
+                closeFaceModal();[cite: 1]
                 if (state.authMode === 'LOGIN') {[cite: 1]
                     state.user = matchedUser; localStorage.setItem('gardena_user', matchedUser);[cite: 1]
                     setTimeout(() => showView('profile'), 300); showAlert("Berhasil", "Selamat datang, " + matchedUser);[cite: 1]
                 } else { processAttendance("FACE"); }[cite: 1]
             } else { 
-                soundError(); triggerHaptic("error"); showAlert("Akses Ditolak", "Wajah tidak dikenali!"); [cite: 1]
+                soundError(); triggerHaptic("error"); showAlert("Akses Ditolak", "Wajah tidak dikenali!");[cite: 1]
                 if(btn) { btn.disabled = false; btn.innerText = "COBA LAGI"; } detectFaceLoop();[cite: 1]
             }
         } catch (e) { soundError(); showAlert("Error", "Gagal memproses AI."); if(btn) btn.disabled = false; }[cite: 1]
@@ -1999,7 +2002,7 @@
     function closeLogoutModal() { document.getElementById('modal-logout').style.display = 'none'; }[cite: 1]
     function logout() { 
         triggerHaptic("confirm"); if(state.geoWatchId) navigator.geolocation.clearWatch(state.geoWatchId);[cite: 1]
-        localStorage.removeItem('gardena_user'); state.user = null; state.adminModeEnabled = false; [cite: 1]
+        localStorage.removeItem('gardena_user'); state.user = null; state.adminModeEnabled = false;[cite: 1]
         document.getElementById('select-user').classList.add('hidden'); closeLogoutModal(); showView('login'); renderUserSelect();[cite: 1]
     }
 
@@ -2040,12 +2043,12 @@
         }
 
         if (a.aligned) {[cite: 1]
-            state.currentDescriptor = d.descriptor; [cite: 1]
+            state.currentDescriptor = d.descriptor;[cite: 1]
             if(o) { o.classList.remove('invalid'); o.classList.add('valid'); }[cite: 1]
             if(b) b.disabled = false;[cite: 1]
         } else {
-            if(o) { [cite: 1]
-                o.classList.remove('valid'); [cite: 1]
+            if(o) {[cite: 1]
+                o.classList.remove('valid');[cite: 1]
                 if (d) o.classList.add('invalid');[cite: 1]
                 else o.classList.remove('invalid');[cite: 1]
             }
@@ -2060,14 +2063,13 @@
         const sel = document.getElementById('select-user'); if(sel) sel.value = "";[cite: 1]
     }
 
-    // SIMPAN PENDAFTARAN WAJAH KE FIREBASE
     async function processRegister() {
         triggerHaptic("confirm"); const b = document.getElementById('btn-reg-save'); if(b) b.disabled = true;[cite: 1]
         const n = document.getElementById('reg-nama').value; const ni = document.getElementById('reg-nip').value;[cite: 1]
         if (!n || !ni) { if(b) b.disabled = false; return showAlert("Gagal", "Data wajib lengkap!"); }[cite: 1]
-        showLoading(true, "Mendaftarkan ke Firebase...");
+        showLoading(true, "Mendaftarkan...");
         try {
-            const key = ni !== "-" ? String(ni).replace(/[.#$\[\]]/g, "_") : "user_" + Date.now();
+            const key = ni !== "-" ? String(ni).replace(/[.#$\[\]\/]/g, "_") : "user_" + Date.now();
             await db.ref(`GARDENA/OFFICERS/${key}`).set({
                 name: n,
                 nip: ni.toString(),
@@ -2076,7 +2078,7 @@
             showAlert("Berhasil", "Terdaftar!");[cite: 1]
             closeRegister();[cite: 1]
         } catch (e) { 
-            showAlert("Error", "Gagal mendaftar.");
+            showAlert("Error", "Gagal mendaftar: " + e.message);
             if(b) b.disabled = false; 
         } finally {
             showLoading(false);
@@ -2087,15 +2089,15 @@
         triggerHaptic("confirm");[cite: 1]
         const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');[cite: 1]
         
-        if (state.data.logs.some(l => l.name === state.user && l.date === today && (l.type === "MASUK" || l.type === "PULANG"))) { [cite: 1]
-            showAlert("Opps", "Sudah melakukan absen rutin hari ini."); [cite: 1]
-            return; [cite: 1]
+        if (state.data.logs.some(l => l.name === state.user && l.date === today && (l.type === "MASUK" || l.type === "PULANG"))) {[cite: 1]
+            showAlert("Opps", "Sudah melakukan absen rutin hari ini.");[cite: 1]
+            return;[cite: 1]
         }
         document.getElementById('modal-dl').style.display = 'flex';[cite: 1]
     }
 
     function closeDLModal() { 
-        document.getElementById('modal-dl').style.display = 'none'; [cite: 1]
+        document.getElementById('modal-dl').style.display = 'none';[cite: 1]
         if(document.getElementById('dl-status-tipe')) document.getElementById('dl-status-tipe').value = "";[cite: 1]
         if(document.getElementById('dl-keterangan')) document.getElementById('dl-keterangan').value = "";[cite: 1]
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));[cite: 1]
@@ -2103,12 +2105,12 @@
     }
     
     async function processDL() {
-        triggerHaptic("confirm"); [cite: 1]
-        const b = document.getElementById('btn-dl-submit');  [cite: 1]
+        triggerHaptic("confirm");[cite: 1]
+        const b = document.getElementById('btn-dl-submit'); [cite: 1]
         if (state.isProcessing) return;[cite: 1]
 
         const tipeStatus = document.getElementById('dl-status-tipe').value;[cite: 1]
-        const keteranganDetail = document.getElementById('dl-keterangan').value.trim(); [cite: 1]
+        const keteranganDetail = document.getElementById('dl-keterangan').value.trim();[cite: 1]
 
         if (!tipeStatus) return showAlert("Opps", "Silakan pilih jenis status terlebih dahulu!");[cite: 1]
         if (!keteranganDetail) return showAlert("Opps", "Silakan isi keterangan alasan atau detailnya!");[cite: 1]
@@ -2123,21 +2125,20 @@
         
         navigator.geolocation.getCurrentPosition(
             (p) => { 
-                state.currentLocation = p; [cite: 1]
-                closeDLModal(); [cite: 1]
-                processAttendanceCustom(tipeStatus, keteranganDetail); [cite: 1]
+                state.currentLocation = p;[cite: 1]
+                closeDLModal();[cite: 1]
+                processAttendanceCustom(tipeStatus, keteranganDetail);[cite: 1]
             }, 
             () => { 
-                closeDLModal(); [cite: 1]
-                processAttendanceCustom(tipeStatus, keteranganDetail); [cite: 1]
+                closeDLModal();[cite: 1]
+                processAttendanceCustom(tipeStatus, keteranganDetail);[cite: 1]
             }
         );
     }
 
-    // SIMPAN STATUS KHUSUS KE FIREBASE
     async function processAttendanceCustom(tipeStatus, noteValue) {
-        if (state.isProcessing) return; [cite: 1]
-        state.isProcessing = true; [cite: 1]
+        if (state.isProcessing) return;[cite: 1]
+        state.isProcessing = true;[cite: 1]
 
         const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');
         const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');[cite: 1]
@@ -2169,7 +2170,7 @@
                     await reg.sync.register('sync-absensi');[cite: 1]
                 }
                 showAlert("Mode Offline", `Status ${tipeStatus} disimpan lokal, otomatis sinkron jika online! 📶`);[cite: 1]
-                renderDailyLog(); [cite: 1]
+                renderDailyLog();[cite: 1]
             } catch (e) {
                 showAlert("Error", "Gagal menyimpan data lokal.");[cite: 1]
             } finally {
@@ -2181,25 +2182,24 @@
         showLoading(true, `Mencatat Status ${tipeStatus}...`);[cite: 1]
         try { 
             await db.ref('GARDENA/DATA').push(payload);
-            showAlert("Berhasil", `Status ${tipeStatus} Berhasil Dicatat ✨`); [cite: 1]
+            showAlert("Berhasil", `Status ${tipeStatus} Berhasil Dicatat ✨`);[cite: 1]
         } catch (e) { 
-            showAlert("Error", "Gagal menyimpan ke server."); [cite: 1]
+            showAlert("Error", "Gagal menyimpan ke server: " + e.message); 
         } finally { 
-            state.isProcessing = false; [cite: 1]
-            showLoading(false);  [cite: 1]
+            state.isProcessing = false;[cite: 1]
+            showLoading(false); [cite: 1]
         }
     }
 
-    // SIMPAN PRESENSI MASUK / PULANG KE FIREBASE
     async function processAttendance(m, n = "-") {
-        if (state.isProcessing) return; [cite: 1]
-        state.isProcessing = true; [cite: 1]
+        if (state.isProcessing) return;[cite: 1]
+        state.isProcessing = true;[cite: 1]
 
         const tc = checkShiftTime();[cite: 1]
-        if (!tc.allow) { [cite: 1]
+        if (!tc.allow) {[cite: 1]
             state.isProcessing = false;  [cite: 1]
-            showAlert("Ditolak", tc.msg); [cite: 1]
-            return; [cite: 1]
+            showAlert("Ditolak", tc.msg);[cite: 1]
+            return;[cite: 1]
         }
 
         const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');[cite: 1]
@@ -2267,7 +2267,7 @@
                     await reg.sync.register('sync-absensi');[cite: 1]
                 }
                 showAlert("Mode Offline", "Sinyal lemah. Absen disimpan & akan dikirim otomatis! 📶");[cite: 1]
-                renderDailyLog(); [cite: 1]
+                renderDailyLog();[cite: 1]
             } catch (e) {
                 showAlert("Error", "Gagal menyimpan data lokal.");[cite: 1]
             } finally {
@@ -2279,12 +2279,12 @@
         showLoading(true, `Mencatat ${t}...`);[cite: 1]
         try { 
             await db.ref('GARDENA/DATA').push(payload);
-            showAlert("Berhasil", `${t} Dicatat ✨`); [cite: 1]
+            showAlert("Berhasil", `${t} Dicatat ✨`);[cite: 1]
         } catch (e) { 
-            showAlert("Error", "Gagal menyimpan presensi."); 
+            showAlert("Error", "Gagal menyimpan presensi: " + e.message); 
         } finally { 
-            state.isProcessing = false; [cite: 1]
-            showLoading(false); [cite: 1]
+            state.isProcessing = false;[cite: 1]
+            showLoading(false);[cite: 1]
         }
     }
 
@@ -2311,13 +2311,13 @@
                 const ft = formatTimeFix(l.time);[cite: 1]
                 if(lastDate === today) {[cite: 1]
                     const statusKhusus = ["DL", "CUTI", "IJIN", "SAKIT"];[cite: 1]
-                    if (l.type === 'MASUK' || statusKhusus.includes(l.type)) { [cite: 1]
-                        if(m) m.innerText = statusKhusus.includes(l.type) ? l.type : ft; [cite: 1]
-                        if(rm) rm.classList.add('ring-active'); [cite: 1]
+                    if (l.type === 'MASUK' || statusKhusus.includes(l.type)) {[cite: 1]
+                        if(m) m.innerText = statusKhusus.includes(l.type) ? l.type : ft;[cite: 1]
+                        if(rm) rm.classList.add('ring-active');[cite: 1]
                     }
-                    if (l.type === 'PULANG' || statusKhusus.includes(l.type)) { [cite: 1]
-                        if(p) p.innerText = statusKhusus.includes(l.type) ? l.type : ft; [cite: 1]
-                        if(rp) rp.classList.add('ring-active'); [cite: 1]
+                    if (l.type === 'PULANG' || statusKhusus.includes(l.type)) {[cite: 1]
+                        if(p) p.innerText = statusKhusus.includes(l.type) ? l.type : ft;[cite: 1]
+                        if(rp) rp.classList.add('ring-active');[cite: 1]
                     }
                 }
                 return `<div class="log-card"><div class="flex items-center gap-3"><div><p class="text-[10px] font-black uppercase">${l.type}</p><p class="text-[8px] text-slate-400 font-bold">${l.date} | ${ft}</p></div></div><span class="text-[7px] font-black px-2 py-1 rounded-lg bg-white border ${l.status?.includes('TERLAMBAT') ? 'text-red-500' : 'text-emerald-500'}">${l.status || 'OK'}</span></div>`;[cite: 1]
@@ -2332,28 +2332,28 @@
     }
 
     window.onload = async () => { 
-        checkAppVersion();  [cite: 1]
-        detectPlatform(); [cite: 1]
-        loadModels();  [cite: 1]
+        checkAppVersion(); [cite: 1]
+        detectPlatform();[cite: 1]
+        loadModels(); [cite: 1]
         
         // Listener Realtime Firebase RTDB
         initFirebaseListeners();
 
         setTimeout(() => { 
-            const s = document.getElementById('splash-screen'); [cite: 1]
-            if(s) s.classList.add('fade-out'); [cite: 1]
+            const s = document.getElementById('splash-screen');[cite: 1]
+            if(s) s.classList.add('fade-out');[cite: 1]
             if(state.user) {[cite: 1]
                 showView(state.user === 'ADMIN' ? 'rekap' : 'profile');[cite: 1]
             }
-        }, 3000); [cite: 1]
+        }, 3000);[cite: 1]
 
         setInterval(() => { 
-            const c = document.getElementById('clock-display'); [cite: 1]
+            const c = document.getElementById('clock-display');[cite: 1]
             if(c) { 
-                c.innerText = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':'); [cite: 1]
-                if(state.currentView === 'profile') renderShiftInfo(); [cite: 1]
+                c.innerText = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');[cite: 1]
+                if(state.currentView === 'profile') renderShiftInfo();[cite: 1]
             } 
-        }, 1000); [cite: 1]
+        }, 1000);[cite: 1]
     };    
 
     window.addEventListener('online', () => { const b = document.getElementById('offline-banner'); if(b) b.style.display = 'none'; });[cite: 1]
