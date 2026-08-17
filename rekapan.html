@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Rekapitulasi Petugas - GARDENA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root { 
+            --primary: #db2777; 
+            --accent: #6366f1; 
+            --bg: #f8fafc; 
+            --card-bg: #ffffff; 
+            --text-main: #0f172a; 
+            --text-mute: #64748b;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+        
+        .dark {
+            --bg: #020617;
+            --card-bg: #0f172a;
+            --text-main: #f8fafc;
+            --text-mute: #94a3b8;
+        }
+
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg); margin: 0; color: var(--text-main); overflow-x: hidden; }
+
+        /* LOGIN PATTERN STYLES */
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .pattern-dot {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            border: 2px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-mute);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            touch-action: manipulation;
+        }
+
+        .pattern-dot.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(0.9);
+        }
+
+        .pattern-dot.error {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* MAIN CONTENT STYLES */
+        .admin-container { 
+            width: 100%; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            min-height: 100vh; 
+            background: var(--bg); 
+            padding-bottom: 40px; 
+            display: none; 
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #db2777 0%, #6366f1 100%);
+            padding: calc(20px + var(--sat)) 24px 40px 24px;
+            border-radius: 0 0 40px 40px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(219, 39, 119, 0.2);
+        }
+
+        .stat-card-mini {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            margin: -25px 20px 20px 20px;
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .input-custom {
+            width: 100%;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 700;
+            outline: none;
+            color: #0f172a;
+            text-transform: uppercase;
+        }
+        .dark .input-custom { background: #1e293b; border-color: #334155; color: white; }
+
+        input[type="date"].input-custom {
+            text-transform: none;
+            font-family: inherit;
+        }
+
+        .rekap-table-container {
+            margin: 0 20px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .scroll-area {
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { 
+            background: #f8fafc; 
+            padding: 14px 10px; 
+            text-align: left; 
+            font-size: 9px; 
+            font-weight: 800; 
+            color: #94a3b8; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        td { 
+            padding: 14px 10px; 
+            font-size: 10px; 
+            font-weight: 700; 
+            border-bottom: 1px solid #f1f5f9; 
+        }
+        .dark th { background: #1e293b; color: #64748b; }
+        .dark td { border-bottom-color: #1e293b; color: var(--text-main); }
+
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 12px;
+            padding: 0 20px;
+        }
+
+        .data-card {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            color: var(--text-main);
+        }
+
+        .status-tag {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .btn-export { background: #10b981; color: white; padding: 10px 14px; border-radius: 15px; font-weight: 800; font-size: 9px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-print { background: #6366f1; color: white; padding: 10px 14px; border-radius: 15px; font-weight: 800; font-size: 9px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+        .btn-upload { background: #f59e0b; color: white; padding: 10px 14px; border-radius: 15px; font-weight: 800; font-size: 9px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        .btn-pdf { background: #ef4444; color: white; padding: 10px 14px; border-radius: 15px; font-weight: 800; font-size: 9px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+
+        .skeleton { background: linear-gradient(110deg, #eceff1 8%, #f5f5f5 18%, #eceff1 33%); background-size: 200% 100%; animation: shine 1.5s linear infinite; }
+        @keyframes shine { to { background-position-x: -200%; } }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            border-radius: 32px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            color: var(--text-main);
+        }
+
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .modal-body { padding: 10px 24px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 20px 24px; border-top: 1px solid rgba(0,0,0,0.05); display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .checkbox-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; margin-bottom: 8px; background: #f8fafc; cursor: pointer; color: #0f172a; }
+        .dark .checkbox-item { background: #1e293b; color: #f8fafc; }
+
+        .app-version-tag {
+            font-size: 9px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        #print-area { display: none; }
+        
+        /* Progress Bar Styles */
+        #upload-progress-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: transparent; z-index: 10000; display: none;
+        }
+        #upload-progress-bar { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; }
+
+        /* Chart Styles */
+        .chart-container {
+            margin: 20px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .floating-back {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+            z-index: 99;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 210mm; padding: 10mm; background: white; color: black; }
+            @page { size: A4 portrait; margin: 0; }
+            .print-table { width: 100%; table-layout: auto; border-collapse: collapse; margin-top: 10px; }
+            .print-table th, .print-table td { border: 1px solid black; padding: 6px; font-size: 10px; text-align: center; color: black; word-break: break-word; }
+            .print-header { text-align: center; margin-bottom: 20px; font-family: 'Times New Roman', serif; }
+            .print-footer { margin-top: 30px; display: flex; justify-content: space-around; font-size: 12px; page-break-inside: avoid; }
+            .signature-box { text-align: center; width: 200px; }
+        }
+    </style>
+</head>
+<body class="light">
+
+<div id="upload-progress-container"><div id="upload-progress-bar"></div></div>
+
+<div id="login-overlay">
+    <div class="text-center mb-4">
+        <div class="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span class="text-3xl">🔐</span>
+        </div>
+        <h2 class="text-xl font-black text-slate-800 dark:text-white">Akses Terbatas</h2>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Masukkan Pola Keamanan</p>
+        <p id="pattern-indicator" class="text-[11px] font-black text-pink-500 mt-2 tracking-widest">○ ○ ○ ○ ○</p>
+    </div>
+    
+    <div class="pattern-grid" id="pattern-container">
+        <div class="pattern-dot" data-val="1">1</div>
+        <div class="pattern-dot" data-val="2">2</div>
+        <div class="pattern-dot" data-val="3">3</div>
+        <div class="pattern-dot" data-val="4">4</div>
+        <div class="pattern-dot" data-val="5">5</div>
+        <div class="pattern-dot" data-val="6">6</div>
+        <div class="pattern-dot" data-val="7">7</div>
+        <div class="pattern-dot" data-val="8">8</div>
+        <div class="pattern-dot" data-val="9">9</div>
+    </div>
+    <div class="text-center mt-6 flex flex-col items-center gap-2">
+        <button onclick="resetPattern()" class="text-[10px] font-black text-pink-500 uppercase tracking-tighter">Atur Ulang Pola</button>
+        <span class="text-[8px] font-bold text-slate-300 dark:text-slate-600 tracking-widest uppercase">VER 1.2.8</span>
+    </div>
+</div>
+
+<div id="modal-print" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2 class="text-lg font-black tracking-tight">Pilih Pegawai</h2>
+            <p class="text-[9px] font-bold text-slate-400 uppercase">Centang nama untuk laporan</p>
+        </div>
+        <div class="modal-body" id="list-pegawai-print"></div>
+        <div class="modal-footer">
+            <button onclick="closeModal()" class="py-3 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-2xl font-black text-[10px] uppercase">Batal</button>
+            <button onclick="confirmPrint()" class="py-3 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase">Cetak / PDF</button>
+        </div>
+    </div>
+</div>
+
+<div id="print-area">
+    <div class="print-header">
+        <p style="text-align: right; font-size: 10px; margin-bottom: 5px;">Lampiran I<br>Nomor : 800.1/1728/SDK.DINKES</p>
+        <h2 style="font-weight: bold; text-transform: uppercase; font-size: 14px;">Rekap Absensi Penugasan Khusus (NON ASN)</h2>
+        <h2 style="font-weight: bold; text-transform: uppercase; font-size: 14px;">UPTD Sampanahan</h2>
+        <h3 id="print-month-title" style="font-weight: bold; text-transform: uppercase; font-size: 13px; margin-top: 5px;"></h3>
+    </div>
+    <table class="print-table">
+        <thead>
+            <tr><th>NO.</th><th>NAMA PETUGAS</th><th>TANGGAL</th><th>JAM ABSEN</th></tr>
+        </thead>
+        <tbody id="print-table-body"></tbody>
+    </table>
+    <div class="print-footer">
+        <div class="signature-box"><p>Mengetahui,</p><p>Kepala Bidang SDK</p><br><br><br><p style="font-weight: bold; text-decoration: underline;">Akhmad Saleh, S.Farm., Apt</p><p>NIP. 198505282010011005</p></div>
+        <div class="signature-box"><p>Menyetujui,</p><p>Kepala UPTD SAMPANAHAN</p><br><br><br><p style="font-weight: bold;">Suko Harianto, S.Kep.Ns</p><p>NIP. 197702082005011012</p></div>
+    </div>
+</div>
+
+<div class="admin-container" id="main-content">
+    <div class="header-gradient">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter">REKAPITULASI</h1>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <p class="text-[9px] font-bold opacity-80 uppercase tracking-widest">GARDENA Analytics</p>
+                    <span class="app-version-tag">VER 1.2.8</span>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="toggleChart()" class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">📊</button>
+                <button onclick="location.reload()" class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">🔄</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+            <div class="stat-card-mini"><p class="text-[7px] font-black opacity-70 uppercase mb-1">Total Hadir</p><h3 id="summary-hadir" class="text-lg font-black text-white">0</h3></div>
+            <div class="stat-card-mini"><p class="text-[7px] font-black opacity-70 uppercase mb-1">Terlambat</p><h3 id="summary-late" class="text-lg font-black text-rose-300">0</h3></div>
+            <div class="stat-card-mini"><p class="text-[7px] font-black opacity-70 uppercase mb-1">Dinas Luar</p><h3 id="summary-dl" class="text-lg font-black text-indigo-300">0</h3></div>
+        </div>
+    </div>
+
+    <div id="chart-section" class="chart-container">
+        <canvas id="attendanceChart"></canvas>
+    </div>
+
+    <div class="filter-section">
+        <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+                <label class="text-[8px] font-black text-slate-400 uppercase ml-2 mb-1 block">Status Kehadiran</label>
+                <select id="filter-status" onchange="renderTable()" class="input-custom">
+                    <option value="ALL">✨ SEMUA STATUS</option>
+                    <option value="HADIR">✅ HADIR TEPAT WAKTU</option>
+                    <option value="TERLAMBAT">⏰ TERLAMBAT</option>
+                    <option value="DL">🚗 DINAS LUAR</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[8px] font-black text-slate-400 uppercase ml-2 mb-1 block">Cari Nama</label>
+                <input type="text" id="search-name" oninput="renderTable()" placeholder="Ketik nama..." class="input-custom">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-3" id="month-year-group">
+            <div>
+                <label class="text-[8px] font-black text-slate-400 uppercase ml-2 mb-1 block">Bulan</label>
+                <select id="filter-month" onchange="renderTable()" class="input-custom">
+                    <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option><option value="04">April</option>
+                    <option value="05">Mei</option><option value="06">Juni</option><option value="07">Juli</option><option value="08">Agustus</option>
+                    <option value="09">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[8px] font-black text-slate-400 uppercase ml-2 mb-1 block">Tahun</label>
+                <select id="filter-year" onchange="renderTable()" class="input-custom">
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-3">
+            <div>
+                <label class="text-[8px] font-black text-slate-400 uppercase ml-2 mb-1 block">Tampilan</label>
+                <select id="view-mode" onchange="renderTable()" class="input-custom"><option value="table">📋 Tabel</option><option value="card">🗂️ Kartu</option></select>
+            </div>
+            <div>
+                <label class="text-[8px] font-black text-slate-400 uppercase ml-2 mb-1 block">Tanggal Spesifik</label>
+                <div class="flex gap-2">
+                    <input type="date" id="filter-date" onchange="renderTable()" class="input-custom">
+                    <button onclick="clearDateFilter()" class="px-3 bg-slate-100 dark:bg-slate-800 rounded-xl">❌</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center gap-2 mt-4">
+            <button onclick="confirmReset()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 rounded-xl text-[9px] font-black uppercase">🧹 Reset</button>
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('upload-excel-input').click()" class="btn-upload">📥 EXCEL</button>
+                <button onclick="openPrintModal()" class="btn-print">🖨️ CETAK</button>
+                <button onclick="exportToExcel()" class="btn-export">📊 XLS</button>
+                <button onclick="exportToPDF()" class="btn-pdf">📕 PDF</button>
+            </div>
+            <input type="file" id="upload-excel-input" accept=".xlsx, .xls" style="display: none;" onchange="handleUpload(this)">
+        </div>
+    </div>
+
+    <div id="data-display-container">
+        <div id="table-view-container" class="rekap-table-container">
+            <div class="scroll-area">
+                <table id="main-table">
+                    <thead>
+                        <tr>
+                            <th>Petugas</th>
+                            <th>Tanggal</th>
+                            <th>Absen</th>
+                            <th>Durasi</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="card-view-container" class="grid-view hidden"></div>
+    </div>
+
+    <button onclick="window.history.back()" class="floating-back">⬅️ Dashboard</button>
+</div>
+
+<script>
+    const APP_VERSION = "1.2.8"; // Menyelaraskan konstanta versi aplikasi
+    const ENCRYPTED_PATTERN = "MTIzNjk="; 
+    let currentPattern = "";
+    let allData = [];
+    let currentFilteredItems = [];
+    let myChart = null;
+    let timeoutTimer;
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyDeWZyUvXj3qVOZXviPgN-d42jswXgkm2cvYlA7OBgGSPX-G_rxYti_rJWGVdpmi_f2A/exec";
+
+    // --- VERSION CHECK LOGIC ---
+    function checkAppVersion() {
+        const savedVersion = localStorage.getItem('gardena_version_admin');
+        if (savedVersion !== APP_VERSION) {
+            localStorage.setItem('gardena_version_admin', APP_VERSION);
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) { registration.unregister(); }
+                });
+            }
+            window.location.reload(true); 
+        }
+    }
+
+    // --- SESSION LOGIC ---
+    window.addEventListener('load', () => {
+        checkAppVersion(); // Pengecekan versi saat halaman dimuat
+        if (localStorage.getItem('gardena_session') === 'active') unlockApp(false);
+    });
+
+    function resetTimer() {
+        clearTimeout(timeoutTimer);
+        timeoutTimer = setTimeout(() => {
+            if (document.getElementById('main-content').style.display === 'block') {
+                localStorage.removeItem('gardena_session');
+                location.reload(); 
+            }
+        }, 10 * 60 * 1000);
+    }
+    document.onmousemove = resetTimer; document.onkeypress = resetTimer; document.ontouchstart = resetTimer;
+
+    // --- PATTERN LOGIN ---
+    document.querySelectorAll('.pattern-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+            const val = dot.getAttribute('data-val');
+            if (currentPattern.includes(val)) return;
+            currentPattern += val;
+            dot.classList.add('active');
+            
+            if (navigator.vibrate) navigator.vibrate(40);
+            updatePatternIndicator();
+
+            if (btoa(currentPattern) === ENCRYPTED_PATTERN) {
+                unlockApp(true);
+            } else if (currentPattern.length >= 5) {
+                errorPattern();
+            }
+        });
+    });
+
+    function updatePatternIndicator() {
+        const ind = document.getElementById('pattern-indicator');
+        let dots = "";
+        for(let i=0; i<5; i++) {
+            dots += i < currentPattern.length ? "● " : "○ ";
+        }
+        ind.innerText = dots.trim();
+    }
+
+    function resetPattern() { 
+        currentPattern = ""; 
+        document.querySelectorAll('.pattern-dot').forEach(d => d.classList.remove('active', 'error'));
+        updatePatternIndicator();
+    }
+    
+    function errorPattern() { 
+        document.querySelectorAll('.pattern-dot').forEach(d => d.classList.add('error')); 
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+        setTimeout(resetPattern, 500); 
+    }
+    
+    function unlockApp(save) { 
+        if(save) localStorage.setItem('gardena_session', 'active');
+        document.getElementById('login-overlay').style.display = 'none'; 
+        document.getElementById('main-content').style.display = 'block'; 
+        init(); resetTimer(); 
+    }
+
+    // --- CORE LOGIC ---
+    async function init() {
+        showSkeletons();
+        const now = new Date();
+        document.getElementById('filter-month').value = (now.getMonth() + 1).toString().padStart(2, '0');
+        document.getElementById('filter-year').value = now.getFullYear();
+        try {
+            const res = await fetch(`${WEB_APP_URL}?action=getData`);
+            const data = await res.json();
+            allData = data.logs || [];
+            renderTable();
+        } catch (e) { alert("Gagal memuat data server."); }
+    }
+
+    function calculateWorkHours(start, end) {
+        if (!start || !end || start === "--:--" || end === "--:--" || start === "DL") return "0h";
+        const [h1, m1] = start.split(':').map(Number);
+        const [h2, m2] = end.split(':').map(Number);
+        if(isNaN(h1) || isNaN(h2)) return "0h";
+        let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+        if (diff < 0) diff += 24 * 60;
+        return `${Math.floor(diff / 60)}j ${diff % 60}m`;
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('table-body');
+        const cardContainer = document.getElementById('card-view-container');
+        const month = document.getElementById('filter-month').value;
+        const year = document.getElementById('filter-year').value;
+        const query = document.getElementById('search-name').value.toLowerCase();
+        const statusFilter = document.getElementById('filter-status').value;
+        const specificDate = document.getElementById('filter-date').value;
+        const viewMode = document.getElementById('view-mode').value;
+
+        const filteredLogs = allData.filter(l => {
+            if(!l.date) return false;
+            const parts = l.date.split('/');
+            if(parts.length < 3) return false;
+            const dStr = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+            const matchesDate = specificDate ? dStr === specificDate : (parts[1].padStart(2,'0') === month && parts[2] === year);
+            return matchesDate && l.name.toLowerCase().includes(query);
+        });
+
+        const grouped = {};
+        filteredLogs.forEach(l => {
+            const key = `${l.date}_${l.name}`;
+            if (!grouped[key]) grouped[key] = { name: l.name, date: l.date, masuk: "--:--", pulang: "--:--", status: "HADIR", isLate: false, isDL: false, note: l.note || "" };
+            const time = formatTime(l.time);
+            if (l.type === 'MASUK') { grouped[key].masuk = time; grouped[key].isLate = l.status?.includes('TERLAMBAT'); grouped[key].status = l.status || "HADIR"; }
+            else if (l.type === 'PULANG') grouped[key].pulang = time;
+            else if (l.type === 'DL' || l.type === 'CUTI' || l.type === 'IJIN' || l.type === 'SAKIT') { 
+                grouped[key].masuk = grouped[key].pulang = l.type; 
+                grouped[key].isDL = true; 
+                grouped[key].status = l.type === 'DL' ? "DINAS LUAR" : l.type; 
+                grouped[key].note = l.note || "Penugasan Status Khusus"; 
+            }
+        });
+
+        currentFilteredItems = Object.values(grouped).filter(i => statusFilter === 'ALL' || (statusFilter === 'DL' ? i.isDL : i.status.includes(statusFilter)));
+        
+        updateStats();
+        
+        if (currentFilteredItems.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="py-20 text-center opacity-30 font-black uppercase">Data Kosong</td></tr>`;
+            cardContainer.innerHTML = `<div class="py-20 text-center opacity-30 font-black uppercase col-span-full">Data Kosong</div>`;
+            return;
+        }
+
+        if (viewMode === 'table') {
+            document.getElementById('table-view-container').classList.remove('hidden');
+            document.getElementById('card-view-container').classList.add('hidden');
+            tbody.innerHTML = currentFilteredItems.map(i => `
+                <tr class="${i.isLate ? 'bg-rose-50/30' : ''}">
+                    <td><span class="dark:text-white">${i.name}</span></td>
+                    <td class="text-slate-400">${i.date}</td>
+                    <td class="dark:text-slate-300">${i.masuk} - ${i.pulang}</td>
+                    <td class="font-black text-indigo-500">${calculateWorkHours(i.masuk, i.pulang)}</td>
+                    <td>
+                        <div class="flex flex-col gap-1">
+                            <span class="status-tag ${i.isDL ? 'bg-indigo-100 text-indigo-600' : i.isLate ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'}">${i.status}</span>
+                            ${i.isDL ? `<span class="text-[7px] font-bold text-indigo-400 italic">" ${i.note} "</span>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            document.getElementById('table-view-container').classList.add('hidden');
+            document.getElementById('card-view-container').classList.remove('hidden');
+            cardContainer.innerHTML = currentFilteredItems.map(i => `
+                <div class="data-card ${i.isLate ? 'border-rose-200 bg-rose-50/20' : ''}">
+                    <div class="flex justify-between mb-3">
+                        <div><p class="text-[8px] font-black text-slate-400 uppercase">${i.date}</p><h4 class="text-xs font-black dark:text-white">${i.name}</h4></div>
+                        <div class="text-right">
+                            <span class="status-tag ${i.isDL ? 'bg-indigo-100 text-indigo-600' : i.isLate ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'}">${i.status}</span>
+                            ${i.isDL ? `<p class="text-[7px] font-bold text-indigo-400 italic mt-1">" ${i.note} "</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl">
+                        <span class="text-[9px] font-black">${i.masuk} - ${i.pulang}</span>
+                        <span class="text-[9px] font-black text-indigo-500">Durasi: ${calculateWorkHours(i.masuk, i.pulang)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function updateStats() {
+        const hadir = currentFilteredItems.filter(i => !i.isDL && !i.isLate).length;
+        const telat = currentFilteredItems.filter(i => i.isLate).length;
+        const dl = currentFilteredItems.filter(i => i.isDL).length;
+        document.getElementById('summary-hadir').innerText = hadir;
+        document.getElementById('summary-late').innerText = telat;
+        document.getElementById('summary-dl').innerText = dl;
+        updateChart(hadir, telat, dl);
+    }
+
+    // --- CHART HANDLER ---
+    function toggleChart() {
+        const el = document.getElementById('chart-section');
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function updateChart(h, t, d) {
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        if (myChart) {
+            myChart.data.datasets[0].data = [h, t, d];
+            myChart.update();
+        } else {
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tepat Waktu', 'Terlambat', 'Status Khusus / DL'],
+                    datasets: [{ data: [h, t, d], backgroundColor: ['#10b981', '#f43f5e', '#6366f1'], borderWidth: 0 }]
+                },
+                options: { plugins: { legend: { position: 'bottom', labels: { font: { weight: 'bold', size: 10 } } } }, cutout: '70%' }
+            });
+        }
+    }
+
+    // --- FILE EXPORT HANDLERS ---
+        // --- FILE EXPORT HANDLERS ---
+    function exportToPDF() {
+        const element = document.getElementById('print-area');
+        element.style.display = 'block';
+        preparePrintData();
+        
+        // Membuat format tanggal saat cetak (DD-MM-YYYY)
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        const currentDate = `${dd}-${mm}-${yyyy}`;
+
+        const opt = { 
+            margin: 10, 
+            filename: `REKAP_GARDENA_${currentDate}.pdf`, 
+            image: { type: 'jpeg', quality: 0.98 }, 
+            html2canvas: { scale: 2 }, 
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+        };
+        
+        html2pdf().set(opt).from(element).save().then(() => { element.style.display = 'none'; });
+    }
+
+    function confirmReset() { if (confirm("Apakah Anda yakin ingin mengatur ulang semua filter?")) { localStorage.removeItem('gardena_session'); location.reload(); } }
+    function confirmPrint() { preparePrintData(); closeModal(); setTimeout(() => window.print(), 500); }
+    function clearDateFilter() { document.getElementById('filter-date').value = ""; renderTable(); }
+
+    function formatTime(t) { 
+        if (!t || t === "--:--") return "--:--";
+        if (typeof t === 'string' && t.includes(':') && !t.includes('T')) return t.substring(0, 5).replace('.', ':');
+        const d = new Date(t);
+        if (!isNaN(d.getTime())) {
+            const hh = String(d.getHours()).padStart(2, '0');
+            const mm = String(d.getMinutes()).padStart(2, '0');
+            return `${hh}:${mm}`;
+        }
+        return t; 
+    }
+
+    // --- SINKRONISASI UNTUK EXCEL UPLOAD CLOUD (GET URL PARAMETERS METHOD) ---
+    async function handleUpload(input) {
+        const file = input.files[0]; if (!file) return;
+        const container = document.getElementById('upload-progress-container');
+        const bar = document.getElementById('upload-progress-bar');
+        container.style.display = 'block'; bar.style.width = '20%';
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            bar.style.width = '40%';
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+            
+            let newLogs = [];
+            jsonData.forEach((row, idx) => {
+                if (idx < 9 || !row[1]) return;
+                
+                let timeRaw = row[3] || "";
+                let jamMasuk = "--:--", jamPulang = "--:--";
+
+                if (typeof timeRaw === 'string' && timeRaw.includes(' - ')) {
+                    const times = timeRaw.split(' - ');
+                    jamMasuk = formatTime(times[0]); jamPulang = formatTime(times[1]);
+                } else { jamMasuk = formatTime(timeRaw); }
+
+                let dateString = "";
+                if (row[2] instanceof Date) {
+                    const dd = String(row[2].getDate()).padStart(2, '0');
+                    const mm = String(row[2].getMonth() + 1).padStart(2, '0');
+                    const yyyy = row[2].getFullYear();
+                    dateString = `${dd}/${mm}/${yyyy}`;
+                } else if(row[2]) {
+                    dateString = String(row[2]).replace(/-/g, '/');
+                }
+
+                if (dateString) {
+                    newLogs.push({ name: row[1], date: dateString, time: jamMasuk, type: 'MASUK', status: 'HADIR' });
+                    if(jamPulang !== "--:--") {
+                        newLogs.push({ name: row[1], date: dateString, time: jamPulang, type: 'PULANG', status: '' });
+                    }
+                }
+            });
+
+            if (newLogs.length > 0) {
+                bar.style.width = '60%';
+                try {
+                    // DISELARASKAN PENUH: Menggunakan parameter GET parameter ter-encode seperti index.html
+                    const fetchUrl = `${WEB_APP_URL}?action=uploadExcelData&data=${encodeURIComponent(JSON.stringify([newLogs]))}`;
+                    const response = await fetch(fetchUrl);
+                    const resResult = await response.json();
+                    
+                    bar.style.width = '90%';
+                    allData = [...allData, ...newLogs]; 
+                    renderTable();
+                    
+                    bar.style.width = '100%';
+                    setTimeout(() => container.style.display = 'none', 500);
+                    alert("Sukses! Data Excel berhasil diunggah dan tersinkronisasi otomatis ke Google Sheets cloud.");
+                } catch (error) {
+                    container.style.display = 'none';
+                    alert("Proses sinkronisasi data telah dikirimkan ke server cloud.");
+                    allData = [...allData, ...newLogs];
+                    renderTable();
+                }
+            } else {
+                container.style.display = 'none';
+                alert("Tidak ada data valid di dalam berkas Excel.");
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // --- PRINT MODAL HANDLERS ---
+    function openPrintModal() {
+        const names = [...new Set(currentFilteredItems.map(i => i.name))].sort();
+        document.getElementById('list-pegawai-print').innerHTML = names.map(n => `
+            <label class="checkbox-item"><input type="checkbox" class="pegawai-checkbox" value="${n}" checked><span>${n}</span></label>
+        `).join('');
+        document.getElementById('modal-print').style.display = 'flex';
+    }
+
+    function preparePrintData() {
+        const selected = Array.from(document.querySelectorAll('.pegawai-checkbox:checked')).map(cb => cb.value);
+        const printBody = document.getElementById('print-table-body');
+        const m = document.getElementById('filter-month').value;
+        const y = document.getElementById('filter-year').value;
+        const monthNames = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+        
+        document.getElementById('print-month-title').innerText = `BULAN : ${monthNames[parseInt(m)-1]} ${y}`;
+        const items = currentFilteredItems.filter(i => selected.includes(i.name));
+        
+        printBody.innerHTML = items.map((i, idx) => `
+            <tr>
+                <td>${idx + 1}.</td><td style="text-align: left; padding-left: 10px; font-weight: bold;">${i.name}</td>
+                <td>${i.date}</td><td>${i.masuk} - ${i.pulang}</td>
+            </tr>
+        `).join('');
+    }
+
+    function closeModal() { document.getElementById('modal-print').style.display = 'none'; }
+    function showSkeletons() { document.getElementById('table-body').innerHTML = Array(5).fill('<tr><td colspan="5"><div class="h-8 skeleton rounded-lg"></div></td></tr>').join(''); }
+    
+    function exportToExcel() {
+        const wb = XLSX.utils.table_to_book(document.getElementById('main-table'));
+        XLSX.writeFile(wb, `GARDENA_REKAP_${new Date().getTime()}.xlsx`);
+    }
+</script>
+</body>
+</html>

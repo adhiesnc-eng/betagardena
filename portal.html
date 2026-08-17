@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GARDENA - Solusi Absensi Cerdas Nakes Sampanahan</title>
+    
+    <meta name="description" content="Garda Terdepan Nakes Sampanahan. Sistem absensi Face Recognition PKM Sampanahan yang cepat, akurat, dan aman.">
+    <meta property="og:title" content="GARDENA - Solusi Absensi Cerdas">
+    <meta property="og:description" content="Presensi Wajah Masa Kini untuk Tenaga Kesehatan PKM Sampanahan.">
+    <meta property="og:image" content="https://it.barokah.net/gardena-thumbnail.jpg">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#db2777">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; transition: background-color 0.3s ease; }
+        .gradient-text {
+            background: linear-gradient(135deg, #db2777 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #db2777 0%, #6366f1 100%);
+            transition: transform 0.3s ease;
+        }
+        .btn-gradient:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(219, 39, 119, 0.3); }
+        .phone-mockup {
+            border: 12px solid #1e293b;
+            border-radius: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(8px);
+        }
+        .faq-item input:checked ~ .faq-content {
+            max-height: 300px;
+            padding-bottom: 20px;
+        }
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .status-pulse { animation: pulse-green 2s infinite; }
+        
+        /* Sabina & Sapena Specific Decoration */
+        .sabina-card {
+            background: linear-gradient(135deg, rgba(219, 39, 119, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+            border: 1px solid rgba(219, 39, 119, 0.1);
+        }
+        .sapena-card {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(5, 150, 105, 0.1);
+        }
+
+        /* Modal Animation */
+        #app-modal { transition: all 0.3s ease-in-out; }
+        .modal-content { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+
+    <!-- MODAL POPUP (Hidden by default) -->
+    <div id="app-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none">
+        <div class="modal-content scale-90 bg-white dark:bg-slate-900 w-full max-w-md rounded-[32px] p-8 shadow-2xl border border-slate-100 dark:border-slate-800 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-600 via-indigo-600 to-emerald-600"></div>
+            
+            <button onclick="closeAppModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div id="modal-icon" class="w-20 h-20 mx-auto bg-slate-100 dark:bg-slate-800 rounded-3xl flex items-center justify-center text-4xl mb-6">
+                <!-- Icon will change via JS -->
+            </div>
+
+            <h3 id="modal-title" class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Akses Terbatas</h3>
+            <p id="modal-brand" class="text-pink-600 font-bold text-xs uppercase tracking-[0.2em] mb-4">GARDENA SYSTEM</p>
+            
+            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 mb-8">
+                <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                    Aplikasi saat ini hanya dapat diakses melalui jaringan internal atau perangkat terdaftar. Silahkan <span class="font-bold text-slate-900 dark:text-white">hubungi Administrator IT</span> untuk aktivasi akun.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <a href="https://wa.me/628XXXXXXXXXX" class="btn-gradient w-full py-4 rounded-2xl text-white font-bold text-sm uppercase tracking-widest">Hubungi Admin IT</a>
+                <button onclick="closeAppModal()" class="w-full py-4 text-slate-400 dark:text-slate-500 font-bold text-xs uppercase tracking-widest hover:text-slate-600 dark:hover:text-slate-300">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-pink-600 rounded-lg flex items-center justify-center text-white font-black text-xs">G</div>
+                <span class="text-xl font-extrabold tracking-tighter text-slate-800 dark:text-white">GARDENA</span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest text-slate-600 dark:text-slate-400">
+                <a href="#fitur" class="hover:text-pink-600">Fitur</a>
+                <a href="#cara-kerja" class="hover:text-pink-600">Cara Kerja</a>
+                <a href="#sabina" class="hover:text-pink-600">SABINA</a>
+                <a href="#sapena" class="hover:text-emerald-600">SAPENA</a>
+                <a href="#faq" class="hover:text-pink-600">FAQ</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400">
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+                    <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                </button>
+                <button onclick="showAppModal('gardena')" class="btn-gradient px-6 py-2.5 rounded-full text-white text-xs font-black uppercase tracking-widest">Buka Aplikasi</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-10 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <div class="flex items-center gap-3 bg-white dark:bg-slate-900 w-fit px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full status-pulse"></div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Semua Sistem Berjalan Normal</span>
+                </div>
+
+                <span class="block bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] w-fit">Official PKM Sampanahan</span>
+                <h1 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight">
+                    Presensi <span class="gradient-text">Wajah</span> Masa Kini.
+                </h1>
+                
+                <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-6 w-fit">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Waktu Server (WITA)</p>
+                        <p id="server-clock" class="text-2xl font-black tabular-nums">00:00:00</p>
+                    </div>
+                    <div class="h-10 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Status Shift</p>
+                        <p id="shift-status-portal" class="text-sm font-bold text-pink-600">Mengecek Sesi...</p>
+                    </div>
+                </div>
+
+                <p class="text-lg text-slate-500 dark:text-slate-400 font-medium leading-relaxed max-w-lg">
+                    Garda Terdepan Nakes Sampanahan. Sistem absensi berbasis Face Recognition yang cepat, akurat, dan terintegrasi lokasi.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <button onclick="showAppModal('gardena')" class="btn-gradient px-8 py-4 rounded-2xl text-white font-bold text-sm uppercase tracking-widest text-center">Mulai Absensi Sekarang</button>
+                    <a href="#cara-kerja" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-8 py-4 rounded-2xl text-slate-600 dark:text-slate-300 font-bold text-sm uppercase tracking-widest hover:bg-slate-50 text-center">Pelajari Fitur</a>
+                </div>
+            </div>
+            
+            <div class="relative flex justify-center">
+                <div class="absolute inset-0 bg-gradient-to-tr from-pink-200/50 to-indigo-200/50 blur-3xl rounded-full"></div>
+                <div class="phone-mockup w-[280px] h-[580px] bg-white dark:bg-slate-900 overflow-hidden relative z-10">
+                    <div class="bg-pink-600 h-24 w-full p-6 text-white text-center">
+                        <div class="w-10 h-1 rounded-full bg-white/20 mx-auto mb-4"></div>
+                        <p class="text-[8px] font-bold opacity-80 uppercase tracking-widest">GARDENA APP</p>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl mx-auto flex items-center justify-center text-2xl">👤</div>
+                        <div class="h-4 bg-slate-100 dark:bg-slate-800 rounded w-3/4 mx-auto"></div>
+                        <div class="h-40 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                             <div class="w-24 h-32 border-2 border-pink-400 rounded-full opacity-30 animate-pulse"></div>
+                        </div>
+                        <div class="h-12 bg-pink-600 rounded-xl w-full flex items-center justify-center text-white text-[10px] font-bold uppercase tracking-widest">Sistem Pintar</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-6 mb-20">
+        <div class="bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/30 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl">✨</div>
+                <div>
+                    <h4 class="font-black text-indigo-900 dark:text-indigo-300">Pembaruan Versi 1.2.1</h4>
+                    <p class="text-sm text-indigo-700/70 dark:text-indigo-400/70 leading-relaxed">Menyelaraskan data biometrik dan koordinat lokasi terbaru.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="flex items-center gap-2 text-xs font-bold text-indigo-800 dark:text-indigo-200">
+                    <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> Fitur DL Tanpa GPS (Bypass)
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-indigo-800 dark:text-indigo-200">
+                    <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> Validasi NIP/NRPK/NS/PJLP Terintegrasi
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-indigo-800 dark:text-indigo-200">
+                    <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> Threshold Akurasi 0.1 (Precise)
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-indigo-800 dark:text-indigo-200">
+                    <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> Auto-Sync Log Harian
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="sabina" class="max-w-7xl mx-auto px-6 mb-12">
+        <div class="sabina-card rounded-[40px] p-8 md:p-12 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                <svg class="w-48 h-48 text-pink-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-pink-600 rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-pink-200">👩‍⚕️</div>
+                        <span class="text-xs font-black uppercase tracking-[0.3em] text-pink-600">SABINA APP</span>
+                    </div>
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-6 leading-tight">Khusus Untuk <span class="text-pink-600">Bidan</span> Hebat Sampanahan.</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
+                        Sistem Absensi Bidan Sampanahan (SABINA) kini hadir terintegrasi. Dirancang khusus untuk memantau kehadiran shift bidan dengan fitur rekap otomatis.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="showAppModal('sabina')" class="bg-slate-900 dark:bg-white dark:text-slate-950 text-white px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2">
+                            Akses SABINA <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-pink-100 dark:border-slate-800 shadow-sm">
+                        <h4 class="text-pink-600 font-black text-xs uppercase mb-2">Shift Jaga</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Logika Pagi, Siang, & Malam otomatis.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-pink-100 dark:border-slate-800 shadow-sm">
+                        <h4 class="text-emerald-600 font-black text-xs uppercase mb-2">Rekap XLS</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Export laporan bulanan sekali klik.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="sapena" class="max-w-7xl mx-auto px-6 mb-24">
+        <div class="sapena-card rounded-[40px] p-8 md:p-12 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                <svg class="w-48 h-48 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V7h2v4z"/></svg>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-emerald-200">💉</div>
+                        <span class="text-xs font-black uppercase tracking-[0.3em] text-emerald-600">SAPENA APP</span>
+                    </div>
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-6 leading-tight">Solusi Presensi <span class="text-emerald-600">Perawat</span> Terintegrasi.</h2>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
+                        Sistem Presensi Perawat (SAPENA) menggunakan teknologi QR Code terverifikasi lokasi (Geofencing) untuk memastikan akurasi kehadiran perawat di Puskesmas Sampanahan.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="showAppModal('sapena')" class="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                            Akses SAPENA <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                        <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 text-[10px] font-bold text-slate-500">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> GPS Verified
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-emerald-100 dark:border-slate-800 shadow-sm">
+                        <h4 class="text-emerald-600 font-black text-xs uppercase mb-2">QR Scanner</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pemindaian QR Cepat & Aman.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-emerald-100 dark:border-slate-800 shadow-sm">
+                        <h4 class="text-blue-600 font-black text-xs uppercase mb-2">Geofencing</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Radius 100m dari titik UGD.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-emerald-100 dark:border-slate-800 shadow-sm">
+                        <h4 class="text-amber-600 font-black text-xs uppercase mb-2">Pahlawan</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Tracking target 20 jaga/bulan.</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-emerald-100 dark:border-slate-800 shadow-sm">
+                        <h4 class="text-slate-800 dark:text-white font-black text-xs uppercase mb-2">Dark Mode</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nyaman di mata saat shift malam.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="md:col-span-1 space-y-4">
+                <h2 class="text-3xl font-black uppercase tracking-tighter italic">Pertolongan Pertama Kegagalan Absen</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Jika aplikasi mengalami kendala saat scan, pastikan Anda memeriksa hal-hal berikut sebelum menghubungi dukungan teknis.</p>
+            </div>
+            <div class="md:col-span-2 grid sm:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <p class="text-2xl mb-4">📷</p>
+                    <h5 class="font-black text-sm uppercase mb-2">Lensa Kamera</h5>
+                    <p class="text-xs text-slate-500">Pastikan lensa kamera bersih dari debu atau sidik jari agar  dapat mengenali titik wajah dengan akurat.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <p class="text-2xl mb-4">📡</p>
+                    <h5 class="font-black text-sm uppercase mb-2">Koneksi Data</h5>
+                    <p class="text-xs text-slate-500">Cek sisa kuota data dan pastikan sinyal stabil. Sistem membutuhkan koneksi untuk verifikasi cloud.</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <p class="text-2xl mb-4">🎭</p>
+                    <h5 class="font-black text-sm uppercase mb-2">Tanpa Masker</h5>
+                    <p class="text-xs text-slate-500">Lepas masker atau kacamata hitam saat scan. Sistem memerlukan visibilitas penuh pada area mata, hidung, dan mulut.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="fitur" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center space-y-4 mb-16">
+            <h2 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Fitur Unggulan</h2>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">Dirancang khusus untuk efisiensi tenaga kesehatan.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white dark:bg-slate-900 p-10 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all">
+                <div class="w-14 h-14 bg-pink-50 dark:bg-pink-900/20 rounded-2xl flex items-center justify-center text-2xl mb-8">🤳</div>
+                <h3 class="text-xl font-black text-slate-800 dark:text-white mb-4 uppercase tracking-tight">Smart Face-Match</h3>
+                <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Teknologi pemindaian biometrik dengan threshold 0.1 yang mengenali Anda dalam sekejap tanpa menyentuh perangkat.</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 p-10 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all">
+                <div class="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl flex items-center justify-center text-2xl mb-8">📍</div>
+                <h3 class="text-xl font-black text-slate-800 dark:text-white mb-4 uppercase tracking-tight">Geofencing Precise</h3>
+                <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Absensi hanya dapat dilakukan dalam radius 100m dari titik koordinat resmi UPTD Puskesmas Sampanahan.</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 p-10 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all">
+                <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center text-2xl mb-8">📊</div>
+                <h3 class="text-xl font-black text-slate-800 dark:text-white mb-4 uppercase tracking-tight">Rekap Instan</h3>
+                <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Sinkronisasi otomatis dengan Google Sheets memudahkan admin dalam rekapitulasi kehadiran bulanan.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="cara-kerja" class="py-24 px-6 bg-slate-50 dark:bg-slate-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center space-y-4 mb-16">
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Cara Kerja</h2>
+                <p class="text-slate-500 dark:text-slate-400 font-medium">Langkah sederhana untuk memulai presensi Anda.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="relative text-center">
+                    <div class="w-16 h-16 bg-pink-600 text-white rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6 shadow-xl relative z-10">1</div>
+                    <div class="hidden md:block absolute top-8 left-1/2 w-full border-t-2 border-dashed border-pink-200 dark:border-pink-900/50"></div>
+                    <h3 class="text-xl font-bold mb-3">Registrasi Data & Wajah</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Daftarkan Nomor Identitas (NIP/NRPK/NS/PJLP) sesuai format resmi Anda dan data biometrik wajah satu kali melalui otorisasi Admin.</p>
+                </div>
+                <div class="relative text-center">
+                    <div class="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6 shadow-xl relative z-10">2</div>
+                    <div class="hidden md:block absolute top-8 left-1/2 w-full border-t-2 border-dashed border-pink-200 dark:border-pink-900/50"></div>
+                    <h3 class="text-xl font-bold mb-3">Verifikasi Lokasi</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Sistem memastikan GPS Anda berada dalam area kerja Puskesmas (Radius 100m).</p>
+                </div>
+                <div class="relative text-center">
+                    <div class="w-16 h-16 bg-emerald-600 text-white rounded-full flex items-center justify-center text-2xl font-black mx-auto mb-6 shadow-xl relative z-10">3</div>
+                    <h3 class="text-xl font-bold mb-3">Scan & Selesai</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Lakukan verifikasi wajah, Sistem mencatat jam masuk/pulang Anda ke server secara real-time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-24 px-6 bg-slate-100 dark:bg-slate-900/50">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-black uppercase tracking-tighter">Tanya Jawab (FAQ)</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="faq-item bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <input type="checkbox" id="faq1" class="hidden">
+                    <label for="faq1" class="faq-title flex justify-between items-center p-6 cursor-pointer font-bold text-slate-800 dark:text-white">
+                        Bagaimana jika saya sedang Dinas Luar (DL)? <span class="text-pink-600">▼</span>
+                    </label>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6">
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Fitur **Input DL** tersedia untuk petugas yang bertugas di luar area. Fitur ini menonaktifkan syarat GPS & QR, namun tetap mewajibkan Login verifikasi wajah di awal sesi.</p>
+                    </div>
+                </div>
+                <div class="faq-item bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <input type="checkbox" id="faq3" class="hidden">
+                    <label for="faq3" class="faq-title flex justify-between items-center p-6 cursor-pointer font-bold text-slate-800 dark:text-white">
+                        Format nomor identitas apa yang bisa digunakan? <span class="text-pink-600">▼</span>
+                    </label>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6">
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Sesuai standar data pegawai di lingkungan Puskesmas Sampanahan, sistem GARDENA mendukung berbagai format identitas seperti **NIP (PNS/PPPK), NRPK, NS (Nusantara Sehat), atau PJLP**.</p>
+                    </div>
+                </div>
+                <div class="faq-item bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                    <input type="checkbox" id="faq2" class="hidden">
+                    <label for="faq2" class="faq-title flex justify-between items-center p-6 cursor-pointer font-bold text-slate-800 dark:text-white">
+                        Apakah data wajah saya aman? <span class="text-pink-600">▼</span>
+                    </label>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6">
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Data biometrik Anda diubah menjadi kode enkripsi unik (hash) dan tidak disimpan dalam bentuk foto asli untuk menjamin privasi penuh.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-12 px-6 border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-bold text-slate-400">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-slate-800 rounded flex items-center justify-center text-white">G</div>
+                <span class="text-slate-800 dark:text-white">GARDENA v1.2.1</span>
+            </div>
+            <p>© 2026 IT.BAROKAH.NET - BAROKAH DEV. All Rights Reserved.</p>
+            <div class="flex gap-6 uppercase tracking-widest">
+                <a href="#" class="hover:text-pink-600">Admin</a>
+                <a href="https://wa.me/628XXXXXXXXXX" class="hover:text-pink-600 font-black">Support Technical</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const moon = document.getElementById('moon-icon');
+            const sun = document.getElementById('sun-icon');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                moon.classList.remove('hidden');
+                sun.classList.add('hidden');
+                localStorage.theme = 'light';
+            } else {
+                html.classList.add('dark');
+                moon.classList.add('hidden');
+                sun.classList.remove('hidden');
+                localStorage.theme = 'dark';
+            }
+        }
+
+        // New Modal Functions
+        function showAppModal(appType) {
+            const modal = document.getElementById('app-modal');
+            const content = modal.querySelector('.modal-content');
+            const icon = document.getElementById('modal-icon');
+            const brand = document.getElementById('modal-brand');
+            const title = document.getElementById('modal-title');
+
+            // Reset and Set dynamic content
+            if(appType === 'sabina') {
+                icon.innerHTML = '👩‍⚕️';
+                brand.innerText = 'SABINA APP';
+                brand.className = 'text-pink-600 font-bold text-xs uppercase tracking-[0.2em] mb-4';
+                title.innerText = 'Akses Khusus Bidan';
+            } else if(appType === 'sapena') {
+                icon.innerHTML = '💉';
+                brand.innerText = 'SAPENA APP';
+                brand.className = 'text-emerald-600 font-bold text-xs uppercase tracking-[0.2em] mb-4';
+                title.innerText = 'Akses Khusus Perawat';
+            } else {
+                icon.innerHTML = '👤';
+                brand.innerText = 'GARDENA SYSTEM';
+                brand.className = 'text-indigo-600 font-bold text-xs uppercase tracking-[0.2em] mb-4';
+                title.innerText = 'Akses Terbatas';
+            }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+        }
+
+        function closeAppModal() {
+            const modal = document.getElementById('app-modal');
+            const content = modal.querySelector('.modal-content');
+            
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Close modal when clicking outside the content
+        window.onclick = function(event) {
+            const modal = document.getElementById('app-modal');
+            if (event.target == modal) {
+                closeAppModal();
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Makassar' };
+            const timeStr = now.toLocaleTimeString('id-ID', options).replace(/\./g, ':');
+            document.getElementById('server-clock').textContent = timeStr;
+            
+            const hour = now.getHours();
+            const statusEl = document.getElementById('shift-status-portal');
+            if (hour >= 7 && hour <= 9) statusEl.innerText = "Sesi Masuk Terbuka";
+            else if (hour >= 14 && hour <= 16) statusEl.innerText = "Sesi Pulang Terbuka";
+            else statusEl.innerText = "Sesi Absen Standby";
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.getElementById('moon-icon').classList.add('hidden');
+            document.getElementById('sun-icon').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
