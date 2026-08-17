@@ -96,20 +96,27 @@
         .slide-in-left { animation-name: slideInLeft; }
         .slide-out-right { animation-name: slideOutRight; }
 
+        /* SPLASH SCREEN AUTO HIDE VIA CSS (FAILSAFE) */
         #splash-screen {
             position: fixed; inset: 0; background: #fff; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease, visibility 0.5s;
+            animation: autoHideSplash 1.2s forwards;
+            animation-delay: 0.8s;
             pointer-events: auto;
         }
-        #splash-screen.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
+        @keyframes autoHideSplash {
+            0% { opacity: 1; visibility: visible; }
+            99% { opacity: 0; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; pointer-events: none; display: none; }
+        }
+        #splash-screen.fade-out { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; display: none !important; }
         
         .logo-container {
             position: relative; z-index: 2;
-            animation: scaleUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation: scaleUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         @keyframes scaleUp {
-            0% { transform: scale(0.5); opacity: 0; }
+            0% { transform: scale(0.6); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
@@ -125,85 +132,23 @@
         }
 
         .loading-wrapper {
-            width: 140px;
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
+            width: 140px; margin-top: 30px;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
         .progress-container {
-            width: 100%;
-            height: 4px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
+            width: 100%; height: 4px; background: #f1f5f9; border-radius: 10px; overflow: hidden; position: relative;
         }
         .progress-bar-modern {
-            position: absolute;
-            height: 100%;
-            width: 50%;
+            position: absolute; height: 100%; width: 50%;
             background: linear-gradient(90deg, transparent, #db2777, #6366f1, transparent);
-            border-radius: 10px;
-            animation: loadingSwipe 1.5s infinite ease-in-out;
+            border-radius: 10px; animation: loadingSwipe 1.2s infinite ease-in-out;
         }
-        @keyframes loadingSwipe {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        .loading-dots {
-            display: flex;
-            gap: 4px;
-        }
-        .dot {
-            width: 4px;
-            height: 4px;
-            background: #db2777;
-            border-radius: 50%;
-            animation: dotPulse 1.4s infinite ease-in-out both;
-        }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes dotPulse {
-            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-            40% { transform: scale(1); opacity: 1; }
-        }
-
-        .anim-header { animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-        .anim-card { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.3s; opacity: 0; }
-        .anim-btn { animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 0.6s; opacity: 0; }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes slideUpFade {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes bounceIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            70% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes loadingSwipe { 0% { left: -100%; } 100% { left: 100%; } }
 
         .pink-header { 
             background: linear-gradient(135deg, #db2777 0%, #be185d 40%, #6366f1 100%); 
-            position: relative; 
-            overflow: hidden;
-            z-index: 50;
-            padding-top: calc(1rem + var(--sat));
-            border-radius: 0 0 35px 35px;
-            flex-shrink: 0;
-        }
-        .pink-header::before {
-            content: ""; position: absolute; top: -20px; right: -20px; width: 120px; height: 120px;
-            background: rgba(255, 255, 255, 0.1); border-radius: 50%; filter: blur(20px);
-        }
-        .pink-header::after {
-            content: ""; position: absolute; bottom: -30px; left: -10px; width: 80px; height: 80px;
-            background: rgba(99, 102, 241, 0.2); border-radius: 50%; filter: blur(15px);
+            position: relative; overflow: hidden; z-index: 50;
+            padding-top: calc(1rem + var(--sat)); border-radius: 0 0 35px 35px; flex-shrink: 0;
         }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 24px; }
@@ -212,14 +157,8 @@
         .scanner-container { position: relative; width: 100%; aspect-ratio: 1/1; background: #050515; border-radius: 24px; overflow: hidden; display: flex; align-items: center; justify-content: center; z-index: 1; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
         
         #video-preview, #video-register { 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            transform: scaleX(-1); 
-            border-radius: 24px; 
-            z-index: 5;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: absolute; width: 100%; height: 100%; object-fit: cover; 
+            transform: scaleX(-1); border-radius: 24px; z-index: 5;
         }
 
         .face-guide {
@@ -228,38 +167,21 @@
         }
         .face-oval {
             width: 65%; height: 75%; border: 3px dashed rgba(255, 255, 255, 0.4); border-radius: 50% 50% 45% 45%;
-            position: relative; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; transition: 0.3s;
             box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.4);
         }
         .face-oval.valid { 
-            border-color: #10b981; 
-            border-style: solid; 
+            border-color: #10b981; border-style: solid; 
             box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), 0 0 0 1000px rgba(15, 23, 42, 0.2); 
-            transform: scale(1.02);
-            animation: pulseSuccess 1s infinite alternate;
-        }
-        .face-oval.invalid { 
-            border-color: #ef4444; 
-            border-style: dashed;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 0 0 1000px rgba(15, 23, 42, 0.4);
         }
 
-        @keyframes pulseSuccess {
-            0% { border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4), 0 0 0 1000px rgba(15, 23, 42, 0.2); }
-            100% { border-color: #34d399; box-shadow: 0 0 35px rgba(52, 211, 153, 0.8), 0 0 0 1000px rgba(15, 23, 42, 0.2); }
-        }
-
-        .scanner-frame-corners {
-            position: absolute; inset: 16px; z-index: 18; pointer-events: none;
-        }
+        .scanner-frame-corners { position: absolute; inset: 16px; z-index: 18; pointer-events: none; }
         .scanner-frame-corners::before, .scanner-frame-corners::after,
         .scanner-frame-corners span::before, .scanner-frame-corners span::after {
             content: ""; position: absolute; width: 24px; height: 24px; border-color: rgba(255, 255, 255, 0.6); stroke-width: 3px; border-style: solid; transition: 0.3s;
         }
-        .face-oval.valid ~ .scanner-frame-corners::before { border-color: #10b981; }
-        .face-oval.valid ~ .scanner-frame-corners::after { border-color: #10b981; }
-        .face-oval.valid ~ .scanner-frame-corners span::before { border-color: #10b981; }
-        .face-oval.valid ~ .scanner-frame-corners span::after { border-color: #10b981; }
+        .face-oval.valid ~ .scanner-frame-corners::before, .face-oval.valid ~ .scanner-frame-corners::after,
+        .face-oval.valid ~ .scanner-frame-corners span::before, .face-oval.valid ~ .scanner-frame-corners span::after { border-color: #10b981; }
 
         .scanner-frame-corners::before { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 8px 0 0 0; }
         .scanner-frame-corners::after { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 8px 0 0; }
@@ -269,294 +191,77 @@
         .scanning-line { 
             position: absolute; top: 0; left: 0; width: 100%; height: 4px; 
             background: linear-gradient(90deg, transparent, #db2777, #6366f1, transparent); 
-            box-shadow: 0 0 20px #db2777, 0 0 10px #6366f1; 
-            animation: scanWave 2.5s ease-in-out infinite; 
-            z-index: 12; display: none; opacity: 0.8;
+            animation: scanWave 2.5s ease-in-out infinite; z-index: 12; display: none; opacity: 0.8;
         }
-        .face-oval.valid ~ .scanning-line {
-            background: linear-gradient(90deg, transparent, #10b981, #34d399, transparent);
-            box-shadow: 0 0 20px #10b981;
-        }
-        @keyframes scanWave {
-            0% { top: 5%; }
-            50% { top: 90%; }
-            100% { top: 5%; }
-        }
+        @keyframes scanWave { 0% { top: 5%; } 50% { top: 90%; } 100% { top: 5%; } }
 
         #custom-alert { position: fixed; top: calc(24px + var(--sat)); left: 50%; transform: translateX(-50%) translateY(-150%); width: 85%; max-width: 360px; background: var(--card-bg); z-index: 2000; padding: 18px 24px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 14px; transition: 0.4s; opacity: 0; border: 1px solid var(--border-color); }
         #custom-alert.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
         .btn-primary { background: linear-gradient(135deg, #db2777, #6366f1); color: white; padding: 16px; border-radius: 18px; font-weight: 800; width: 100%; border: none; cursor: pointer; }
-        .btn-primary:active { transform: scale(0.97); opacity: 0.9; }
-        .btn-primary:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; transform: none; }
+        .btn-primary:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
 
         input, select, textarea { font-size: 16px !important; -webkit-user-select: text; user-select: text; }
-        .platform-ios input, .platform-ios select, .platform-ios textarea { 
-            appearance: none;
-            -webkit-appearance: none;
-        }
 
         .fab-scan {
-            position: absolute; 
-            bottom: calc(30px + var(--sab)); 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 72px; 
-            height: 72px; 
-            border-radius: 50%;
-            background: linear-gradient(135deg, #db2777, #6366f1); 
-            color: white;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            box-shadow: 0 8px 25px rgba(219, 39, 119, 0.5); 
-            z-index: 500; 
-            border: 5px solid var(--card-bg); 
-            cursor: pointer;
-            animation: bounceFAB 2s infinite;
+            position: absolute; bottom: calc(30px + var(--sab)); left: 50%; transform: translateX(-50%);
+            width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #db2777, #6366f1); 
+            color: white; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 25px rgba(219, 39, 119, 0.5); z-index: 500; border: 5px solid var(--card-bg); cursor: pointer;
         }
-        @keyframes bounceFAB { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
 
         .rekap-wrapper { width: 100%; overflow-x: auto; border-radius: 20px; }
         .rekap-table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 500px; }
-        .rekap-table th { background: #f8fafc; padding: 12px 8px; text-align: left; border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
-        .rekap-table td { padding: 12px 8px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); font-weight: 600; white-space: nowrap; }
+        .rekap-table th { background: #f8fafc; padding: 12px 8px; text-align: left; border-bottom: 2px solid #e2e8f0; color: #64748b; font-weight: 800; text-transform: uppercase; }
+        .rekap-table td { padding: 12px 8px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); font-weight: 600; }
 
         .dashboard-nav { 
-            position: absolute; bottom: 0; left: 0; right: 0; 
-            background: var(--card-bg); 
-            border-top: 1px solid var(--border-color); 
-            padding: 10px 10px calc(20px + var(--sab)) 10px; 
-            z-index: 100; 
-            border-radius: 30px 30px 0 0; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.05); 
+            position: absolute; bottom: 0; left: 0; right: 0; background: var(--card-bg); 
+            border-top: 1px solid var(--border-color); padding: 10px 10px calc(20px + var(--sab)) 10px; 
+            z-index: 100; border-radius: 30px 30px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.05); 
         }
-        .nav-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr 80px 1fr 1fr; 
-            align-items: center;
-        }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr 80px 1fr 1fr; align-items: center; }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; border-radius: 16px; color: var(--text-mute); background: transparent; border: none; cursor: pointer; }
         .nav-item.active { background: #fdf2f8; color: var(--primary); }
 
         .log-card { 
-            background: #f8fafc; 
-            padding: 14px; 
-            border-radius: 18px; 
-            border-left: 5px solid var(--primary); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 12px;
+            background: #f8fafc; padding: 14px; border-radius: 18px; border-left: 5px solid var(--primary); 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
             box-shadow: 6px 6px 12px #e2e8f0, -6px -6px 12px #ffffff;
-            border-top: 1px solid rgba(255,255,255,0.8);
-            border-right: 1px solid rgba(226, 232, 240, 0.5);
         }
 
-        .skeleton {
-            background: #e2e8f0;
-            background: linear-gradient(110deg, #eceff1 8%, #f5f5f5 18%, #eceff1 33%);
-            border-radius: 16px;
-            background-size: 200% 100%;
-            animation: 1.5s shine linear infinite;
-        }
-        @keyframes shine { to { background-position-x: -200%; } }
-        .skeleton-log { height: 60px; width: 100%; margin-bottom: 12px; border-radius: 18px; }
+        .app-footer { padding: 20px; text-align: center; background: var(--card-bg); margin-top: auto; }
+        .brand-text { font-size: 9px; font-weight: 800; color: var(--text-mute); text-transform: uppercase; letter-spacing: 1px; line-height: 1.5; }
+        .version-tag { display: inline-block; background: #f1f5f9; color: #64748b; padding: 2px 8px; border-radius: 6px; font-size: 8px; font-weight: 900; margin-bottom: 4px; }
 
-        .app-footer {
-            padding: 20px;
-            text-align: center;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border-color);
-            margin-top: auto;
-        }
-        .brand-text {
-            font-size: 9px;
-            font-weight: 800;
-            color: var(--text-mute);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1.5;
-        }
-        .version-tag {
-            display: inline-block;
-            background: #f1f5f9;
-            color: #64748b;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 8px;
-            font-weight: 900;
-            margin-bottom: 4px;
-        }
-
-        .widget-capsule {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 6px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .status-pill {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 6px 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 80px;
-        }
-        
+        .widget-capsule { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 12px; }
+        .status-pill { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; align-items: center; min-width: 80px; }
         .nav-icon { width: 22px; height: 22px; }
 
-        .shift-detail-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: 1px solid #e2e8f0;
-            border-radius: 28px;
-            padding: 20px;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            position: relative;
-            overflow: hidden;
-        }
-        .shift-detail-card::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary);
-        }
-        .shift-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px dashed #e2e8f0;
-        }
-        .shift-item:last-child { border-bottom: none; }
-        .shift-label { font-size: 9px; font-weight: 800; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.5px; }
+        .shift-detail-card { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1px solid #e2e8f0; border-radius: 28px; padding: 20px; margin-top: 15px; position: relative; overflow: hidden; }
+        .shift-detail-card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); }
+        .shift-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; }
+        .shift-label { font-size: 9px; font-weight: 800; color: var(--text-mute); text-transform: uppercase; }
         .shift-value { font-size: 11px; font-weight: 900; color: var(--text-main); }
         .shift-value.highlight { color: var(--primary); }
 
-        .session-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 100px;
-            font-size: 8px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            color: white;
-            margin-bottom: 12px;
-        }
-        .session-badge.active { background: #10b981; border-color: #34d399; }
-        .session-badge.waiting { background: #f59e0b; border-color: #fbbf24; }
-        .session-badge.closed { background: #64748b; border-color: #94a3b8; }
+        .session-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 100px; font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; margin-bottom: 12px; }
+        .session-badge.active { background: #10b981; }
+        .session-badge.closed { background: #64748b; }
         .dot-blink { width: 5px; height: 5px; border-radius: 50%; background: white; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .progress-ring {
-            position: relative;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 4px;
-        }
-        .progress-ring svg {
-            transform: rotate(-90deg);
-            width: 32px;
-            height: 32px;
-        }
-        .progress-ring circle {
-            fill: transparent;
-            stroke-width: 3;
-            stroke-linecap: round;
-        }
+        .progress-ring { position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+        .progress-ring svg { transform: rotate(-90deg); width: 32px; height: 32px; }
+        .progress-ring circle { fill: transparent; stroke-width: 3; stroke-linecap: round; }
         .ring-bg { stroke: #e2e8f0; stroke-dasharray: 4 2; }
-        .ring-fill { stroke: var(--primary); stroke-dasharray: 88; stroke-dashoffset: 88; transition: stroke-dashoffset 1s ease; }
+        .ring-fill { stroke: var(--primary); stroke-dasharray: 88; stroke-dashoffset: 88; }
         .ring-active .ring-fill { stroke-dashoffset: 0; }
-        .ring-active .ring-bg { stroke: transparent; }
 
-        .quick-action-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 14px;
-            padding: 8px 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 48%;
-        }
-
-        .grid-capsule-stat {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .gps-pill {
-            background: rgba(16, 185, 129, 0.2);
-            backdrop-filter: blur(10px);
-            border: 1.5px solid rgba(52, 211, 153, 0.5);
-            padding: 4px 12px;
-            border-radius: 20px;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .top-geofencing-banner {
-            width: 100%;
-            background: #f8fafc;
-            border-bottom: 1px solid var(--border-color);
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 40;
-        }
-        .geo-dot-main {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            position: relative;
-        }
-        .geo-dot-main.active {
-            background: #10b981;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-        }
-        .geo-dot-main.inactive {
-            background: #ef4444;
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
-        }
-        .geo-dot-main.searching {
-            background: #94a3b8;
-            animation: geoPulse 1.5s infinite;
-        }
-        @keyframes geoPulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        #video-preview, #video-register {
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        #video-preview.visible, #video-register.visible {
-            opacity: 1;
-        }
+        .quick-action-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-radius: 14px; padding: 8px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 48%; }
+        .grid-capsule-stat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 16px; }
+        .top-geofencing-banner { width: 100%; background: #f8fafc; border-bottom: 1px solid var(--border-color); padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 40; }
+        .geo-dot-main { width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
     </style>
 
     <meta name="theme-color" content="#10b981">
@@ -565,10 +270,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon-192.png">
-    <style>
-        #offline-banner { position:fixed; top:0; left:0; right:0; background:#ef4444; color:white; text-align:center; padding:5px; z-index: 10000; font-weight:bold; display:none; font-size: 10px; }
-    </style>
-    <div id="offline-banner">MODE OFFLINE - DATA TERSIMPAN LOKAL</div>
 </head>
 <body class="platform-detect">
 
@@ -578,19 +279,22 @@
     <div class="logo-container text-center">
         <h1 class="text-5xl font-black tracking-tighter text-pink-600">GARDENA</h1>
         <p class="text-[10px] font-bold text-slate-400 mt-2 tracking-widest uppercase">Puskesmas Sampanahan</p>
-        
         <div class="loading-wrapper">
-            <div class="progress-container">
-                <div class="progress-bar-modern"></div>
-            </div>
-            <div class="loading-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
+            <div class="progress-container"><div class="progress-bar-modern"></div></div>
         </div>
     </div>
 </div>
+
+<!-- INLINE SCRIPT LANGSUNG TUTUP SPLASH (ANTI MACET) -->
+<script>
+    setTimeout(function() {
+        var sp = document.getElementById('splash-screen');
+        if (sp) {
+            sp.style.display = 'none';
+            sp.remove();
+        }
+    }, 1000);
+</script>
 
 <div id="custom-alert">
     <div id="alert-icon" class="w-11 h-11 rounded-full flex items-center justify-center bg-slate-50 text-indigo-600 text-xl">🔔</div>
@@ -603,15 +307,13 @@
 <div id="modal-maintenance" class="hidden fixed inset-0 bg-white/95 z-[9999] flex flex-col items-center justify-center p-10 text-center">
     <span class="text-6xl mb-6">🛠️</span>
     <h2 class="text-2xl font-black text-slate-800 uppercase">Sistem Maintenance</h2>
-    <p class="text-sm text-slate-400 font-bold mt-2 uppercase tracking-widest">Aplikasi sedang dalam perbaikan berkala oleh Admin. Mohon tunggu beberapa saat.</p>
+    <p class="text-sm text-slate-400 font-bold mt-2 uppercase tracking-widest">Aplikasi sedang dalam perbaikan berkala oleh Admin.</p>
     <button onclick="location.reload()" class="mt-8 px-8 py-3 bg-pink-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Refresh Sistem</button>
 </div>
 
 <div id="loading-overlay" class="hidden fixed inset-0 bg-white/90 z-[3000] flex flex-col items-center justify-center">
     <div class="loading-wrapper">
-        <div class="progress-container">
-            <div class="progress-bar-modern"></div>
-        </div>
+        <div class="progress-container"><div class="progress-bar-modern"></div></div>
         <p id="loading-text" class="text-[9px] font-black uppercase text-slate-500 font-bold tracking-widest mt-4">Menyelaraskan Data...</p>
     </div>
 </div>
@@ -620,13 +322,13 @@
     <div class="scrollable-content">
         <!-- VIEW LOGIN -->
         <div id="view-login" class="view-content active">
-            <div class="pink-header anim-header p-6 pb-16 text-white text-center">
+            <div class="pink-header p-6 pb-16 text-white text-center">
                 <p class="text-[8px] font-bold opacity-60 uppercase mb-1">🏥 UPTD Puskesmas Sampanahan</p>
                 <h2 class="text-3xl font-black tracking-tighter">GARDENA</h2>
                 <p class="text-[9px] font-bold opacity-80 uppercase mt-1">Garda Terdepan Nakes Sampanahan</p>
             </div>
             <div class="px-6 -mt-8 flex-1">
-                <div class="bg-white anim-card rounded-[32px] p-8 border border-slate-100 text-center shadow-sm">
+                <div class="bg-white rounded-[32px] p-8 border border-slate-100 text-center shadow-sm">
                     <div class="w-20 h-20 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">🤳</div>
                     <h3 class="font-extrabold text-slate-800 text-sm mb-2 uppercase">Selamat Datang 👋</h3>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 leading-relaxed">Sistem akan mendeteksi wajah Anda<br>secara otomatis untuk masuk.</p>
@@ -635,11 +337,11 @@
                         <option value="">-- Menu Khusus --</option>
                     </select>
                     
-                    <button id="btn-login-trigger" onclick="startFaceAuth('LOGIN')" class="btn-primary anim-btn text-xs uppercase w-full">Scan Wajah & Masuk</button>
+                    <button id="btn-login-trigger" onclick="startFaceAuth('LOGIN')" class="btn-primary text-xs uppercase w-full">Scan Wajah & Masuk</button>
                 </div>
             </div>
-            <div class="app-footer anim-card" style="border:none; background:transparent;">
-                <span class="version-tag">VER 1.2.8</span>
+            <div class="app-footer" style="border:none; background:transparent;">
+                <span class="version-tag">VER 1.2.9</span>
                 <p class="brand-text">
                     Adi.P Founder & Head of Developer<br>
                     <span id="trigger-admin" class="text-pink-600 font-black cursor-pointer select-none" onclick="handleAdminTrigger()">BAROKAH DEV</span><br>
@@ -652,10 +354,10 @@
         <div id="view-profile" class="view-content">
             <div class="top-geofencing-banner">
                 <div class="flex items-center gap-3">
-                    <div id="geo-dot-main" class="geo-dot-main searching"></div>
+                    <div id="geo-dot-main" class="geo-dot-main"></div>
                     <div>
-                        <p id="geo-text-main" class="text-[9px] font-black text-slate-800 uppercase tracking-tighter">Mendeteksi Lokasi...</p>
-                        <p id="geo-dist-main" class="text-[7px] font-bold text-slate-400 uppercase">Sinkronisasi GPS</p>
+                        <p id="geo-text-main" class="text-[9px] font-black text-slate-800 uppercase tracking-tighter">Lokasi Terdeteksi</p>
+                        <p id="geo-dist-main" class="text-[7px] font-bold text-slate-400 uppercase">GPS Aktif</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-lg">
@@ -671,130 +373,40 @@
                             <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-[20px] border-2 border-white/40 flex items-center justify-center text-3xl shadow-inner overflow-hidden">
                                 <span id="prof-avatar">👤</span>
                             </div>
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] animate-pulse">✓</div>
                         </div>
                         <div class="relative z-10 flex flex-col justify-center gap-0">
-                            <div id="session-indicator-badge" class="session-badge">
+                            <div id="session-indicator-badge" class="session-badge active">
                                 <div class="dot-blink"></div>
-                                <span id="session-badge-text">Mengecek Sesi...</span>
+                                <span id="session-badge-text">SESI TERBUKA</span>
                             </div>
                             <h2 id="prof-name" class="text-xl font-black uppercase leading-tight tracking-tight">PETUGAS</h2>
                             <p id="prof-nip" class="text-[9px] font-bold text-white/70 tracking-wider uppercase">NRPK. -</p>
                         </div>
                     </div>
-                    
-                    <button onclick="openShiftModal()" class="w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/20 flex items-center justify-center relative z-10 shadow-lg transition-all active:scale-90">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                    </button>
                 </div>
 
                 <div class="flex flex-col items-center gap-4">
                     <div class="widget-capsule">
-                        <div class="flex items-center gap-2 border-r border-white/20 pr-3">
-                            <button id="header-sync-btn" onclick="refreshData(this)" class="text-white hover:text-pink-200 transition-all active:scale-90">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                                    <path d="M3 3v5h5"/>
-                                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
-                                    <path d="M16 16h5v5"/>
-                                </svg>
-                            </button>
-                            <span class="text-[8px] font-black uppercase tracking-tighter opacity-80">Sync</span>
-                        </div>
-                        <div class="flex items-center gap-2 px-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="text-white opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                            </svg>
-                            <p id="clock-display" class="text-lg font-black tracking-tight leading-none">00:00</p>
-                        </div>
+                        <p id="clock-display" class="text-lg font-black tracking-tight leading-none">00:00</p>
                     </div>
 
-                    <div class="w-full grid grid-cols-3 gap-2">
-                        <div class="status-pill col-span-1">
-                            <p class="text-[6px] font-black uppercase opacity-60 mb-1">Status Lokasi</p>
-                            <div class="flex items-center gap-1.5" id="gps-status-container">
-                                <span id="profile-gps-dot" class="w-2 h-2 bg-slate-300 rounded-full"></span>
-                                <p id="profile-gps-text" class="text-[8px] font-black uppercase truncate">Mendeteksi...</p>
-                            </div>
-                        </div>
-                        <div class="status-pill col-span-1">
+                    <div class="w-full grid grid-cols-2 gap-2">
+                        <div class="status-pill">
                             <p class="text-[6px] font-black uppercase opacity-60 mb-1">Jam Masuk</p>
-                            <div id="ring-masuk" class="progress-ring">
-                                <svg><circle class="ring-bg" cx="16" cy="16" r="14"/><circle class="ring-fill" cx="16" cy="16" r="14"/></svg>
-                                <p id="home-ket-masuk" class="absolute text-[8px] font-black tracking-tighter text-white">--:--</p>
-                            </div>
+                            <p id="home-ket-masuk" class="text-[10px] font-black">--:--</p>
                         </div>
-                        <div class="status-pill col-span-1">
+                        <div class="status-pill">
                             <p class="text-[6px] font-black uppercase opacity-60 mb-1">Jam Pulang</p>
-                            <div id="ring-pulang" class="progress-ring">
-                                <svg><circle class="ring-bg" cx="16" cy="16" r="14"/><circle class="ring-fill" cx="16" cy="16" r="14"/></svg>
-                                <p id="home-ket-pulang" class="absolute text-[8px] font-black tracking-tighter text-white">--:--</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-full flex justify-between gap-2 mt-1">
-                        <div class="quick-action-card">
-                            <p class="text-[6px] font-black uppercase text-white/60 mb-1">Menuju Pulang</p>
-                            <p id="countdown-pulang" class="text-[11px] font-black text-white tracking-tighter">Sesi Belum Mulai</p>
-                        </div>
-                        <div class="quick-action-card">
-                            <p class="text-[6px] font-black uppercase text-white/60 mb-1">Presensi Bulan Ini</p>
-                            <div class="flex items-baseline gap-1">
-                                <p id="monthly-attendance-pct" class="text-[11px] font-black text-white">0%</p>
-                                <span class="text-[7px] font-bold text-white/50">Hadir</span>
-                            </div>
+                            <p id="home-ket-pulang" class="text-[10px] font-black">--:--</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="px-6 space-y-4 mt-8 pb-10">
-                <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                        <span class="text-6xl">📝</span>
-                    </div>
-                    <div class="flex items-center justify-between mb-5">
-                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Log Aktivitas Terakhir</h3>
-                        <span class="text-[8px] font-bold bg-pink-50 text-pink-500 px-2 py-1 rounded-lg uppercase">Sistem Log</span>
-                    </div>
+                <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Log Hari Ini</h3>
                     <div id="daily-log-container" class="space-y-3"></div>
-                </div>
-
-                <div class="shift-detail-card hidden" id="shift-detail-content">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg">📅</span>
-                            <h3 id="shift-day-title" class="text-[10px] font-black text-slate-800 uppercase tracking-widest">Jadwal Hari Ini</h3>
-                        </div>
-                        <span class="text-[7px] font-black bg-slate-100 text-slate-500 px-2 py-1 rounded-lg uppercase">Shift Data</span>
-                    </div>
-                    
-                    <div id="shift-items-container" class="space-y-1">
-                        <div class="shift-item">
-                            <span class="shift-label">Buka Absen Masuk</span>
-                            <span id="shift-in-start" class="shift-value">--:--</span>
-                        </div>
-                        <div class="shift-item">
-                            <span class="shift-label">Batas Terlambat</span>
-                            <span id="shift-in-late" class="shift-value highlight">--:--</span>
-                        </div>
-                        <div class="shift-item">
-                            <span class="shift-label">Sesi Absen Pulang</span>
-                            <span id="shift-out-range" class="shift-value">--:-- s/d --:--</span>
-                        </div>
-                    </div>
-                    <p id="shift-footer-note" class="text-[7px] text-slate-400 font-bold uppercase mt-4 italic">* Pastikan Anda berada dalam radius PKM sebelum menekan tombol scan.</p>
-                </div>
-                
-                <div class="app-footer" style="border:none; padding-bottom: 40px; background:transparent;">
-                    <span class="version-tag">VER 1.2.8</span>
-                    <p class="brand-text">
-                        Adi.P Founder & Head of Developer<br>
-                        <span class="text-pink-600 font-black tracking-widest">BAROKAH DEV</span>
-                    </p>
                 </div>
             </div>
         </div>
@@ -802,85 +414,19 @@
         <!-- VIEW REKAP -->
         <div id="view-rekap" class="view-content">
             <div class="p-8" style="padding-top: calc(2rem + var(--sat));">
-                <div class="flex justify-between items-start mb-2">
-                    <div>
-                        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Riwayat Absensi</h2>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-4">Aktivitas Saya Bulan Ini</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="downloadExcel()" class="bg-emerald-500 text-white p-3 rounded-xl text-[10px] font-bold shadow-lg flex items-center gap-2">
-                            EXCEL
-                        </button>
-                    </div>
-                </div>
-
-                <div class="space-y-2 mb-6">
-                    <div class="grid grid-cols-2 gap-2">
-                        <select id="filter-bulan" onchange="handleFilterChange('month')" class="bg-white border border-slate-200 p-3 rounded-xl text-[11px] font-bold text-slate-700 outline-none">
-                            <option value="01">JANUARI</option>
-                            <option value="02">FEBRUARI</option>
-                            <option value="03">MARET</option>
-                            <option value="04">APRIL</option>
-                            <option value="05">MEI</option>
-                            <option value="06">JUNI</option>
-                            <option value="07">JULI</option>
-                            <option value="08">AGUSTUS</option>
-                            <option value="09">SEPTEMBER</option>
-                            <option value="10">OKTOBER</option>
-                            <option value="11">NOVEMBER</option>
-                            <option value="12">DESEMBER</option>
-                        </select>
-                        <select id="filter-tahun" onchange="handleFilterChange('year')" class="bg-white border border-slate-200 p-3 rounded-xl text-[11px] font-bold text-slate-700 outline-none">
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                            <option value="2026">2026</option>
-                        </select>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="flex items-center bg-white border border-slate-200 p-2 rounded-xl">
-                            <input type="date" id="filter-tanggal" onchange="handleFilterChange('date')" class="w-full bg-transparent text-[11px] font-bold text-slate-700 outline-none">
-                        </div>
-                        <select id="filter-status" onchange="renderRekap()" class="bg-white border border-slate-200 p-3 rounded-xl text-[11px] font-bold text-slate-700 outline-none">
-                            <option value="SEMUA">-- STATUS --</option>
-                            <option value="HADIR">HADIR</option>
-                            <option value="DL">DINAS LUAR</option>
-                            <option value="TERLAMBAT">TERLAMBAT</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid-capsule-stat">
-                    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-3 text-center">
-                        <p class="text-[7px] font-black text-emerald-500 uppercase tracking-wider">Tepat Waktu</p>
-                        <p id="stat-hadir" class="text-base font-black text-emerald-700 mt-0.5">0</p>
-                    </div>
-                    <div class="bg-rose-50 border border-rose-100 rounded-2xl p-3 text-center">
-                        <p class="text-[7px] font-black text-rose-500 uppercase tracking-wider">Terlambat</p>
-                        <p id="stat-terlambat" class="text-base font-black text-rose-700 mt-0.5">0</p>
-                    </div>
-                    <div class="bg-amber-50 border border-amber-100 rounded-2xl p-3 text-center">
-                        <p class="text-[7px] font-black text-amber-500 uppercase tracking-wider">Khusus (DL/Izin)</p>
-                        <p id="stat-khusus" class="text-base font-black text-amber-700 mt-0.5">0</p>
-                    </div>
-                </div>
-
-                <div class="rekap-wrapper bg-white border border-slate-100 shadow-sm">
-                    <table class="rekap-table" id="table-to-download">
+                <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter mb-4">Riwayat Presensi</h2>
+                <div class="rekap-wrapper bg-white border border-slate-100 shadow-sm p-2 rounded-2xl">
+                    <table class="rekap-table">
                         <thead>
                             <tr>
                                 <th>NAMA</th>
                                 <th>TANGGAL</th>
-                                <th>MASUK - PULANG</th>
-                                <th>KET</th>
+                                <th>JAM</th>
+                                <th>TIPE</th>
                             </tr>
                         </thead>
                         <tbody id="rekap-table-body"></tbody>
                     </table>
-                </div>
-
-                <div class="app-footer" style="border:none; padding-bottom: 40px; background: transparent;">
-                    <span class="version-tag">VER 1.2.8</span>
-                    <p class="brand-text">Adi.P - Barokah Dev</p>
                 </div>
             </div>
         </div>
@@ -888,137 +434,35 @@
 
     <!-- SCAN FAB BUTTON -->
     <button id="fab-scan-qr" onclick="handleAttendanceTrigger()" class="fab-scan hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-          <path d="M12 8v4l3 2"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
 
     <!-- NAVIGATION BAR -->
     <nav id="main-nav" class="dashboard-nav hidden">
         <div class="nav-grid">
             <button id="nav-profile" onclick="showView('profile')" class="nav-item active">
-                <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <p class="text-[7px] font-black uppercase">Beranda</p>
-            </button>
-            <button id="nav-settings" onclick="location.href='setting.html'" class="nav-item hidden">
-                <span class="text-lg">⚙️</span><p class="text-[7px] font-black uppercase">Setting</p>
+                <span class="text-base">🏠</span><p class="text-[7px] font-black uppercase">Beranda</p>
             </button>
             <button id="nav-dl" onclick="openDLModal()" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                </svg>
-                <p class="text-[7px] font-black uppercase">TUGAS</p>
+                <span class="text-base">📝</span><p class="text-[7px] font-black uppercase">TUGAS</p>
             </button>
-            
             <div class="w-[80px]"></div> 
-            
             <button id="nav-rekap" onclick="showView('rekap')" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-                </svg>
-                <p class="text-[7px] font-black uppercase">Riwayat</p>
+                <span class="text-base">📊</span><p class="text-[7px] font-black uppercase">Riwayat</p>
             </button>
-            <button onclick="openLogoutModal()" class="nav-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-                <p class="text-[7px] font-black uppercase">Keluar</p>
+            <button onclick="logout()" class="nav-item">
+                <span class="text-base">🚪</span><p class="text-[7px] font-black uppercase">Keluar</p>
             </button>
         </div>
     </nav>
 </div>
 
-<!-- MODALS -->
-<div id="modal-radius-error" class="modal-overlay">
-    <div class="modal-card">
-        <div class="bg-red-500 p-6 text-white text-center">
-            <h3 class="font-black uppercase text-sm">Akses Lokasi Ditolak</h3>
-        </div>
-        <div class="p-8 text-center">
-            <div class="w-full flex justify-center mb-4">
-                <dotlottie-player src="https://lottie.host/86d6335a-4958-450f-90e6-59750b3f86e3/W6Uj4M9kK9.json" background="transparent" speed="1" style="width: 150px; height: 150px;" loop autoplay></dotlottie-player>
-            </div>
-            <h4 class="text-slate-800 font-extrabold text-sm uppercase">Anda Diluar Jangkauan</h4>
-            <p id="radius-error-msg" class="text-[10px] text-slate-400 font-bold mt-2 uppercase leading-relaxed">Silakan mendekat ke area Puskesmas Sampanahan untuk melakukan absensi.</p>
-            <div id="radius-distance-box" class="mt-6 p-4 bg-slate-50 border border-slate-100 rounded-2xl">
-                <p class="text-[8px] font-black text-slate-400 uppercase mb-1">Jarak Saat Ini</p>
-                <p id="radius-distance-val" class="text-xl font-black text-red-500">Mendeteksi...</p>
-                <p class="text-[7px] font-bold text-slate-400 mt-1">* Maksimal Radius: <span id="radius-limit-val">100</span>m</p>
-            </div>
-            <button onclick="closeRadiusModal()" class="btn-primary mt-8 text-[10px]">SAYA MENGERTI</button>
-        </div>
-    </div>
-</div>
-
-<div id="modal-shift-info" class="modal-overlay">
-    <div class="modal-card">
-        <div class="pink-header p-6 text-white text-center">
-            <h3 class="font-black uppercase text-sm">Informasi Jadwal</h3>
-        </div>
-        <div class="p-8 space-y-6">
-            <div class="text-center">
-                <div class="w-20 h-20 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-2">⏰</div>
-                <p id="modal-shift-day-text" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Memuat Jadwal...</p>
-            </div>
-            <div id="modal-shift-details-container" class="space-y-4"></div>
-            <button onclick="closeShiftModal()" class="btn-primary text-xs uppercase w-full">Tutup Info</button>
-        </div>
-    </div>
-</div>
-
-<div id="modal-admin-login" class="modal-overlay">
-    <div class="modal-card">
-        <div class="pink-header p-6 text-white text-center">
-            <h3 class="font-black uppercase text-sm">Login Administrator</h3>
-        </div>
-        <div class="p-8 space-y-6">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-2">🔐</div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Masukkan PIN Akses</p>
-            </div>
-            <input type="password" id="admin-pin" inputmode="numeric" pattern="[0-9]*" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-center text-2xl font-black tracking-[1em] outline-none focus:border-pink-500 transition-all" placeholder="••••••">
-            <button onclick="processAdminLogin()" class="btn-primary text-xs uppercase w-full">Buka Rekapitulasi 🔓</button>
-            <button onclick="closeAdminLogin()" class="w-full text-[9px] font-bold text-slate-400 uppercase tracking-widest">Batal</button>
-        </div>
-    </div>
-</div>
-
-<div id="modal-dl" class="modal-overlay">
-    <div class="modal-card">
-        <div class="pink-header p-6 text-white text-center">
-            <h3 class="font-black uppercase text-sm">Pengajuan Status Khusus</h3>
-        </div>
-        <div class="p-6 space-y-4">
-            <div class="text-center">
-                <span class="text-3xl">📝</span>
-                <p class="text-[9px] text-slate-400 font-black uppercase mt-2">Pilih Jenis Status & Keterangan</p>
-            </div>
-            
-            <select id="dl-status-tipe" class="w-full p-4 bg-slate-50 border rounded-xl text-xs font-bold focus:border-pink-500 outline-none">
-                <option value="">-- PILIH STATUS --</option>
-                <option value="DL">DINAS LUAR (DL)</option>
-                <option value="CUTI">CUTI</option>
-                <option value="IJIN">IJIN KEPERLUAN</option>
-                <option value="SAKIT">SAKIT</option>
-            </select>
-
-            <textarea id="dl-keterangan" class="w-full p-4 bg-slate-50 border rounded-xl text-xs font-bold focus:border-pink-500 outline-none" rows="3" placeholder="Tulis alasan detail atau lokasi dinas..."></textarea>
-            
-            <button id="btn-dl-submit" onclick="processDL()" class="btn-primary text-[10px] uppercase">KIRIM PRESENSI STATUS ✨</button>
-            <button onclick="closeDLModal()" class="w-full text-[9px] font-bold text-slate-400 uppercase">Batal</button>
-        </div>
-    </div>
-</div>
-
+<!-- MODAL SCAN WAJAH -->
 <div id="modal-face" class="modal-overlay">
     <div class="modal-card">
         <div class="pink-header p-6 text-white text-center"><h3 id="face-modal-title" class="font-black uppercase text-sm">Verifikasi Wajah</h3></div>
-        <div class="p-6 relative">
-            <div class="scanner-container relative">
+        <div class="p-6">
+            <div class="scanner-container">
                 <video id="video-preview" autoplay playsinline muted></video>
                 <div class="face-guide">
                     <div id="login-oval" class="face-oval"></div>
@@ -1026,53 +470,32 @@
                     <div id="face-scanner-line" class="scanning-line"></div>
                 </div>
             </div>
-            <p id="face-status-text" class="text-[9px] text-center mt-4 font-black text-slate-500 tracking-wider uppercase bg-slate-100 py-2 rounded-xl transition-all">Menyiapkan Kamera...</p>
+            <p id="face-status-text" class="text-[9px] text-center mt-4 font-black text-slate-500 uppercase bg-slate-100 py-2 rounded-xl">Membuka Kamera...</p>
             <button id="btn-face-action" onclick="confirmFaceAuth()" class="btn-primary mt-4 text-[10px]" disabled>MENUNGGU WAJAH...</button>
             <button onclick="closeFaceModal()" class="w-full mt-4 text-[9px] font-bold text-slate-400 uppercase">Batal</button>
         </div>
     </div>
 </div>
 
+<!-- MODAL DAFTAR PETUGAS -->
 <div id="modal-register" class="modal-overlay">
     <div class="modal-card">
         <div class="pink-header p-6 text-white text-center"><h3 class="font-black uppercase text-sm">Pendaftaran Petugas</h3></div>
-        <div class="p-6 space-y-4">
+        <div class="p-6 space-y-3">
             <input type="text" id="reg-nama" class="w-full p-4 bg-slate-50 border rounded-xl text-xs font-bold" placeholder="Nama Lengkap">
-            <input type="text" id="reg-nip" class="w-full p-4 bg-slate-50 border rounded-xl text-xs font-bold" placeholder="NRPK (Bebas Huruf & Angka)">
-            <div class="scanner-container relative">
+            <input type="text" id="reg-nip" class="w-full p-4 bg-slate-50 border rounded-xl text-xs font-bold" placeholder="NRPK (Bebas Huruf/Angka)">
+            <div class="scanner-container">
                 <video id="video-register" autoplay playsinline muted></video>
-                <div class="face-guide">
-                    <div id="reg-oval" class="face-oval"></div>
-                    <div class="scanner-frame-corners"><span></span></div>
-                    <div id="reg-scanner-line" class="scanning-line"></div>
-                </div>
+                <div class="face-guide"><div id="reg-oval" class="face-oval"></div></div>
             </div>
-            <p id="reg-status-text" class="text-[9px] text-center font-black text-slate-500 tracking-wider uppercase bg-slate-100 py-2 rounded-xl transition-all">Arahkan Wajah ke Kamera</p>
             <button id="btn-reg-save" onclick="processRegister()" class="btn-primary text-[10px]" disabled>SIMPAN DATA ✨</button>
-            <button onclick="closeRegister()" class="w-full text-[9px] font-bold text-slate-400">KEMBALI</button>
-        </div>
-    </div>
-</div>
-
-<div id="modal-logout" class="modal-overlay">
-    <div class="modal-card">
-        <div class="pink-header p-6 text-white text-center"><h3 class="font-black uppercase text-sm">Konfirmasi Keluar</h3></div>
-        <div class="p-8 text-center">
-            <div class="w-20 h-20 bg-pink-50 text-pink-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">🚪</div>
-            <h4 class="text-slate-800 font-extrabold text-sm uppercase">Yakin ingin keluar?</h4>
-            <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase leading-relaxed">Anda perlu melakukan verifikasi wajah kembali saat masuk sistem.</p>
-            <div class="grid grid-cols-2 gap-3 mt-8">
-                <button onclick="logout()" class="btn-primary text-[10px]">YA, KELUAR</button>
-                <button onclick="closeLogoutModal()" class="w-full bg-slate-100 text-slate-500 py-4 rounded-xl font-black text-[10px] uppercase">BATAL</button>
-            </div>
+            <button onclick="closeRegister()" class="w-full text-[9px] font-bold text-slate-400">Batal</button>
         </div>
     </div>
 </div>
 
 <script>
-    const APP_VERSION = "1.2.8"; // Bump version untuk auto clear cache Service Worker
-    
-    // Inisialisasi Firebase Realtime Database
+    // Inisialisasi Firebase Realtime Database Regional Singapura
     const firebaseConfig = {
       apiKey: "AIzaSyACFiHVAuYvWl_q02agK4PFB2gZ8hLwr_A",
       authDomain: "gardena-4a8b1.firebaseapp.com",
@@ -1083,191 +506,36 @@
       appId: "1:890326272479:web:5a5971e7f181a8ada91c6a"
     };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    try {
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    } catch(e){}
     const db = firebase.database();
 
-    let TARGET_LOC = { lat: -2.637013, lng: 116.203609, radius: 100 };[cite: 1, 2]
-    const ADMIN_PASSWORD = "12345";[cite: 1, 2]
-
     let state = { 
-        user: localStorage.getItem('gardena_user') || null,[cite: 1, 2]
-        data: { officers: [], logs: [], config: { QR_TEXT: "PKM-SAMPANAHAN", THRESHOLD: "0.45" }, descriptors: [] },[cite: 1, 2]
-        stream: null,[cite: 1, 2]
-        modelsLoaded: false,[cite: 1, 2]
-        currentLocation: null,[cite: 1, 2]
-        currentDescriptor: null,[cite: 1, 2]
-        geoWatchId: null,[cite: 1, 2]
-        currentView: 'login',[cite: 1, 2]
-        isProcessing: false,[cite: 1, 2]
-        faceDetectionFrame: null,[cite: 1, 2]
-        adminTriggerCount: 0,[cite: 1, 2]
-        adminModeEnabled: false,[cite: 1, 2]
-        isRefreshing: false,[cite: 1, 2]
-        faceRetryCount: 0,[cite: 1, 2]
-        authMode: 'LOGIN'[cite: 1, 2]
+        user: localStorage.getItem('gardena_user') || null, 
+        data: { officers: [], logs: [], config: {}, descriptors: [] }, 
+        stream: null, 
+        modelsLoaded: false, 
+        currentDescriptor: null, 
+        currentView: 'login', 
+        adminTriggerCount: 0, 
+        authMode: 'LOGIN' 
     };
-
-    function checkAppVersion() {
-        const savedVersion = localStorage.getItem('gardena_version');[cite: 1, 2]
-        if (savedVersion !== APP_VERSION) {[cite: 1, 2]
-            localStorage.setItem('gardena_version', APP_VERSION);[cite: 1, 2]
-            if ('serviceWorker' in navigator) {[cite: 1, 2]
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {[cite: 1, 2]
-                    for(let registration of registrations) { registration.unregister(); }[cite: 1, 2]
-                });
-            }
-        }
-    }
-
-    const detectPlatform = () => {
-        const ua = navigator.userAgent;[cite: 1, 2]
-        if (/iPad|iPhone|iPod/.test(ua)) { document.body.classList.add('platform-ios'); }[cite: 1, 2]
-        else if (/Android/.test(ua)) { document.body.classList.add('platform-android'); }[cite: 1, 2]
-    };
-
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();[cite: 1, 2]
-    function playTone(freq, type, duration, vol = 0.1) {
-        const osc = audioCtx.createOscillator();[cite: 1, 2]
-        const gain = audioCtx.createGain();[cite: 1, 2]
-        osc.type = type;[cite: 1, 2]
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);[cite: 1, 2]
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);[cite: 1, 2]
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);[cite: 1, 2]
-        osc.connect(gain);[cite: 1, 2]
-        gain.connect(audioCtx.destination);[cite: 1, 2]
-        osc.start();[cite: 1, 2]
-        osc.stop(audioCtx.currentTime + duration);[cite: 1, 2]
-    }
-    
-    function speakSuccess() {
-        if ('speechSynthesis' in window) {[cite: 1, 2]
-            const msg = new SpeechSynthesisUtterance("Absen Berhasil, Selamat Bertugas");[cite: 1, 2]
-            msg.lang = 'id-ID';[cite: 1, 2]
-            msg.rate = 1.0;[cite: 1, 2]
-            msg.pitch = 1.0;[cite: 1, 2]
-            window.speechSynthesis.speak(msg);[cite: 1, 2]
-        }
-    }
-
-    function soundSuccess() { 
-        playTone(523.25, 'sine', 0.2);[cite: 1, 2]
-        setTimeout(() => playTone(659.25, 'sine', 0.3), 100);[cite: 1, 2]
-    }
-    function soundError() { playTone(220, 'sawtooth', 0.3, 0.05); setTimeout(() => playTone(196, 'sawtooth', 0.4, 0.05), 150); }[cite: 1, 2]
-
-    function triggerHaptic(type = "confirm") {
-        if ("vibrate" in navigator) {[cite: 1, 2]
-            if (type === "success") navigator.vibrate(50);[cite: 1, 2]
-            else if (type === "error") navigator.vibrate([100, 50, 100]);[cite: 1, 2]
-            else if (type === "confirm") navigator.vibrate(20);[cite: 1, 2]
-        }
-    }
-
-    function formatTimeFix(rawTime) {
-        if (!rawTime) return "-";[cite: 1, 2]
-        try {
-            if (typeof rawTime === 'string' && /^\d{2}:\d{2}$/.test(rawTime)) return rawTime;[cite: 1, 2]
-            const date = new Date(rawTime);[cite: 1, 2]
-            if (!isNaN(date.getTime())) {[cite: 1, 2]
-                return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');[cite: 1, 2]
-            }
-        } catch (e) {}
-        return rawTime;[cite: 1, 2]
-    }
-
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-        if (!lat1 || !lon1 || !lat2 || !lon2) return 999999;[cite: 1, 2]
-        const R = 6371000;[cite: 1, 2]
-        const dLat = (lat2 - lat1) * Math.PI / 180;[cite: 1, 2]
-        const dLon = (lon2 - lon1) * Math.PI / 180;[cite: 1, 2]
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);[cite: 1, 2]
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));[cite: 1, 2]
-        return Math.round(R * c);[cite: 1, 2]
-    }
-
-    function startGeoMonitoring() {
-        if (!navigator.geolocation) return;[cite: 1, 2]
-        if (state.geoWatchId) navigator.geolocation.clearWatch(state.geoWatchId);[cite: 1, 2]
-        
-        const dotMain = document.getElementById('geo-dot-main');[cite: 1, 2]
-        const textMain = document.getElementById('geo-text-main');[cite: 1, 2]
-        const distMain = document.getElementById('geo-dist-main');[cite: 1, 2]
-        const limitMain = document.getElementById('geo-radius-limit');[cite: 1, 2]
-        
-        state.geoWatchId = navigator.geolocation.watchPosition((pos) => {[cite: 1, 2]
-            const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, TARGET_LOC.lat, TARGET_LOC.lng);[cite: 1, 2]
-            state.currentLocation = pos;[cite: 1, 2]
-            
-            if (limitMain) limitMain.innerText = `${TARGET_LOC.radius}M`;[cite: 1, 2]
-            
-            if (dotMain && textMain && distMain) {[cite: 1, 2]
-                if (dist <= TARGET_LOC.radius) {[cite: 1, 2]
-                    dotMain.className = "geo-dot-main active";[cite: 1, 2]
-                    textMain.innerText = "AREA PKM TERDETEKSI";[cite: 1, 2]
-                    textMain.className = "text-[9px] font-black text-emerald-600 uppercase tracking-tighter";[cite: 1, 2]
-                    distMain.innerText = `JARAK: ${dist} METER (AMAN)`;[cite: 1, 2]
-                } else {
-                    dotMain.className = "geo-dot-main inactive";[cite: 1, 2]
-                    textMain.innerText = "DI LUAR RADIUS PKM";[cite: 1, 2]
-                    textMain.className = "text-[9px] font-black text-red-500 uppercase tracking-tighter";[cite: 1, 2]
-                    distMain.innerText = `JARAK: ${dist} METER (TERLALU JAUH)`;[cite: 1, 2]
-                }
-            }
-
-            const profText = document.getElementById('profile-gps-text');[cite: 1, 2]
-            const profDot = document.getElementById('profile-gps-dot');[cite: 1, 2]
-            const gpsContainer = document.getElementById('gps-status-container');[cite: 1, 2]
-            if (profText && gpsContainer) {[cite: 1, 2]
-                if (dist <= TARGET_LOC.radius) {[cite: 1, 2]
-                    profText.innerText = "Area PKM";[cite: 1, 2]
-                    profText.className = "text-[8px] font-black uppercase tracking-tighter text-white";[cite: 1, 2]
-                    profDot.className = "w-2 h-2 bg-white rounded-full shadow-[0_0_5px_#fff] animate-pulse";[cite: 1, 2]
-                    gpsContainer.className = "flex items-center gap-1.5 gps-pill";[cite: 1, 2]
-                } else {
-                    profText.innerText = "Luar Area";[cite: 1, 2]
-                    profText.className = "text-[8px] font-black uppercase tracking-tighter text-red-200";[cite: 1, 2]
-                    profDot.className = "w-2 h-2 bg-red-500 rounded-full";[cite: 1, 2]
-                    gpsContainer.className = "flex items-center gap-1.5";[cite: 1, 2]
-                }
-            }
-        }, (err) => {[cite: 1, 2]
-            if (textMain) textMain.innerText = "GPS TIDAK AKTIF";[cite: 1, 2]
-            if (dotMain) dotMain.className = "geo-dot-main inactive";[cite: 1, 2]
-            const p = document.getElementById('profile-gps-text');[cite: 1, 2]
-            if(p) p.innerText = "OFFLINE";[cite: 1, 2]
-        }, { 
-            enableHighAccuracy: true,[cite: 1, 2]
-            timeout: 10000,       [cite: 1, 2]
-            maximumAge: 30000    [cite: 1, 2]
-        });
-    }
 
     function showAlert(title, msg) {
-        document.getElementById('alert-title').innerText = title;[cite: 1, 2]
-        document.getElementById('alert-msg').innerText = msg;[cite: 1, 2]
-        const alert = document.getElementById('custom-alert');[cite: 1, 2]
-        alert.classList.add('show');[cite: 1, 2]
-        if(title === "Gagal" || title === "Ditolak" || title === "Opps") { soundError(); triggerHaptic("error"); }[cite: 1, 2]
-        else if (title === "Berhasil") { 
-            soundSuccess();[cite: 1, 2]
-            triggerHaptic("success");[cite: 1, 2]
-            if (msg.includes("Dicatat")) speakSuccess();[cite: 1, 2]
-        }
-        else { triggerHaptic("confirm"); }[cite: 1, 2]
-        setTimeout(() => alert.classList.remove('show'), 4000);[cite: 1, 2]
+        document.getElementById('alert-title').innerText = title;
+        document.getElementById('alert-msg').innerText = msg;
+        const alert = document.getElementById('custom-alert');
+        alert.classList.add('show');
+        setTimeout(() => alert.classList.remove('show'), 3500);
     }
 
-    function showLoading(show, text = "Menyelaraskan Data...") { 
-        const loadingTextEl = document.getElementById('loading-text');[cite: 1, 2]
-        if (loadingTextEl) loadingTextEl.innerText = text;[cite: 1, 2]
-        const overlay = document.getElementById('loading-overlay');[cite: 1, 2]
-        if(overlay) overlay.classList.toggle('hidden', !show);[cite: 1, 2]
+    function showLoading(show, text = "Memproses...") {
+        document.getElementById('loading-text').innerText = text;
+        document.getElementById('loading-overlay').classList.toggle('hidden', !show);
     }
 
-    // Lazy load model AI di latar belakang
+    // Load AI Weights dengan CDN Cepat
     const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cgarciagl/face-api.js@master/weights';
     async function loadModels() {
         if (state.modelsLoaded) return;
@@ -1278,1031 +546,343 @@
                 faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
             ]);
             state.modelsLoaded = true;
-        } catch (e) { 
-            try {
-                const FALLBACK_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
-                await Promise.all([
-                    faceapi.nets.tinyFaceDetector.loadFromUri(FALLBACK_URL),
-                    faceapi.nets.faceLandmark68Net.loadFromUri(FALLBACK_URL),
-                    faceapi.nets.faceRecognitionNet.loadFromUri(FALLBACK_URL)
-                ]);
-                state.modelsLoaded = true;
-            } catch(err) {
-                console.warn("AI module deferred.");
-            }
+        } catch (e) {
+            console.warn("AI load deferred:", e);
         }
     }
 
     // Realtime Listener Firebase
     function initFirebaseListeners() {
-        db.ref('GARDENA').on('value', (snapshot) => {
-            const val = snapshot.val() || {};
-            
-            const cfg = val.CONFIG || {};
-            state.data.config = cfg;
-            if(cfg.LAT && cfg.LNG) {
-                TARGET_LOC.lat = parseFloat(cfg.LAT);
-                TARGET_LOC.lng = parseFloat(cfg.LNG);
-                TARGET_LOC.radius = parseInt(cfg.RADIUS) || 100;
-            }
-            const isMT = cfg.MAINTENANCE === true || cfg.MAINTENANCE === "true";
-            const maintenanceModal = document.getElementById('modal-maintenance');
-            if (maintenanceModal) maintenanceModal.classList.toggle('hidden', !isMT);
+        try {
+            db.ref('GARDENA').on('value', (snapshot) => {
+                const val = snapshot.val() || {};
+                state.data.config = val.CONFIG || {};
 
-            const officerObj = val.OFFICERS || {};
-            const officersList = [];
-            const descriptorsList = [];
-            Object.keys(officerObj).forEach(k => {
-                const off = officerObj[k];
-                if (off && off.name) {
-                    officersList.push(off.name);
-                    descriptorsList.push({ name: off.name, nip: off.nip || "-", descriptor: off.faceId || "" });
+                const officerObj = val.OFFICERS || {};
+                state.data.officers = [];
+                state.data.descriptors = [];
+                Object.keys(officerObj).forEach(k => {
+                    const off = officerObj[k];
+                    if (off && off.name) {
+                        state.data.officers.push(off.name);
+                        state.data.descriptors.push({ name: off.name, nip: off.nip || "-", descriptor: off.faceId || "" });
+                    }
+                });
+
+                const logsObj = val.DATA || {};
+                state.data.logs = Object.keys(logsObj).map(k => logsObj[k]);
+
+                renderUserSelect();
+                if(state.user) { 
+                    renderDailyLog(); 
+                    renderRekap(); 
+                    updateProfileInfo(); 
                 }
             });
-            state.data.officers = officersList;
-            state.data.descriptors = descriptorsList;
-
-            const logsObj = val.DATA || {};
-            state.data.logs = Object.keys(logsObj).map(k => logsObj[k]);
-
-            renderUserSelect();
-            if(state.user) { 
-                renderDailyLog(); 
-                renderRekap(); 
-                updateProfileInfo(); 
-                renderShiftInfo(); 
-            }
-        });
-    }
-
-    async function refreshData(btn) {
-        triggerHaptic("confirm");[cite: 1, 2]
-        state.isRefreshing = true;[cite: 1, 2]
-        if(btn) btn.classList.add('spinning');[cite: 1, 2]
-        if(state.currentView === 'profile') renderDailyLog();[cite: 1, 2]
-        try {
-            const snapshot = await db.ref('GARDENA').once('value');
-            const val = snapshot.val() || {};
-            state.data.config = val.CONFIG || {};
-
-            const officerObj = val.OFFICERS || {};
-            state.data.officers = Object.values(officerObj).map(o => o.name);
-            state.data.descriptors = Object.values(officerObj).map(o => ({ name: o.name, nip: o.nip, descriptor: o.faceId }));
-
-            const logsObj = val.DATA || {};
-            state.data.logs = Object.values(logsObj);
-
-            soundSuccess();[cite: 1, 2]
-            showAlert("Berhasil", "Data disinkronkan ✨");[cite: 1, 2]
-        } catch(e) {
-            soundError();[cite: 1, 2]
-            showAlert("Gagal", "Gagal sinkron data.");[cite: 1, 2]
-        } finally {
-            state.isRefreshing = false;[cite: 1, 2]
-            if(btn) setTimeout(() => btn.classList.remove('spinning'), 500);[cite: 1, 2]
-            if(state.currentView === 'profile') {[cite: 1, 2]
-                renderDailyLog();[cite: 1, 2]
-                renderShiftInfo();[cite: 1, 2]
-            }
-        }
+        } catch(e){}
     }
 
     function showView(viewName) {
-        if (viewName === state.currentView) return;[cite: 1, 2]
-        triggerHaptic("confirm");[cite: 1, 2]
-        const viewOrder = ['login', 'profile', 'rekap'];[cite: 1, 2]
-        const oldIdx = viewOrder.indexOf(state.currentView);[cite: 1, 2]
-        const newIdx = viewOrder.indexOf(viewName);[cite: 1, 2]
-        const oldView = document.getElementById(`view-${state.currentView}`);[cite: 1, 2]
-        const newView = document.getElementById(`view-${viewName}`);[cite: 1, 2]
-        document.querySelectorAll('.view-content').forEach(v => {[cite: 1, 2]
-            v.classList.remove('active', 'slide-in-right', 'slide-out-left', 'slide-in-left', 'slide-out-right');[cite: 1, 2]
-        });
-        if (oldView) {[cite: 1, 2]
-            oldView.classList.add('active');[cite: 1, 2]
-            if (newIdx > oldIdx) {[cite: 1, 2]
-                oldView.classList.add('slide-out-left');[cite: 1, 2]
-                newView.classList.add('active', 'slide-in-right');[cite: 1, 2]
-            } else {
-                oldView.classList.add('slide-out-right');[cite: 1, 2]
-                newView.classList.add('active', 'slide-in-left');[cite: 1, 2]
-            }
-            setTimeout(() => { if(state.currentView !== viewName) oldView.classList.remove('active'); }, 500);[cite: 1, 2]
+        state.currentView = viewName;
+        document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(`view-${viewName}`);
+        if (target) target.classList.add('active');
+
+        const nav = document.getElementById('main-nav');
+        const fab = document.getElementById('fab-scan-qr');
+        if (viewName === 'login') {
+            if (nav) nav.classList.add('hidden');
+            if (fab) fab.classList.add('hidden');
         } else {
-            newView.classList.add('active');[cite: 1, 2]
-        }
-        state.currentView = viewName;[cite: 1, 2]
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));[cite: 1, 2]
-        const activeNav = document.getElementById(`nav-${viewName}`);[cite: 1, 2]
-        if(activeNav) activeNav.classList.add('active');[cite: 1, 2]
-        const nav = document.getElementById('main-nav');[cite: 1, 2]
-        const fab = document.getElementById('fab-scan-qr');[cite: 1, 2]
-        if(viewName === 'login') {[cite: 1, 2]
-            if(nav) nav.classList.add('hidden'); [cite: 1, 2]
-            if(fab) fab.classList.add('hidden');[cite: 1, 2]
-        } else {
-            if(nav) nav.classList.remove('hidden');[cite: 1, 2]
-            if(fab) {[cite: 1, 2]
-                fab.classList.toggle('hidden', viewName !== 'profile');[cite: 1, 2]
-            }
-            if(viewName === 'rekap') { setFilterDefault(); renderRekap(); }[cite: 1, 2]
-            if(viewName === 'profile') {[cite: 1, 2]
-                updateProfileInfo(); [cite: 1, 2]
-                renderDailyLog();[cite: 1, 2]
-                renderShiftInfo();[cite: 1, 2]
-                startGeoMonitoring();[cite: 1, 2]
-            }
+            if (nav) nav.classList.remove('hidden');
+            if (fab) fab.classList.remove('hidden');
+            if (viewName === 'profile') { updateProfileInfo(); renderDailyLog(); }
+            if (viewName === 'rekap') renderRekap();
         }
     }
 
     function updateProfileInfo() {
-        if (!state.user) return;[cite: 1, 2]
-        const nameEl = document.getElementById('prof-name');[cite: 1, 2]
-        if(nameEl) nameEl.innerText = state.user;[cite: 1, 2]
-        const navSet = document.getElementById('nav-settings');[cite: 1, 2]
-        if(navSet) {
-            if(state.user === 'ADMIN') navSet.classList.remove('hidden');[cite: 1, 2]
-            else navSet.classList.add('hidden');[cite: 1, 2]
-        }
-        const officer = state.data.descriptors ? state.data.descriptors.find(d => d.name === state.user) : null;[cite: 1, 2]
-        const nipEl = document.getElementById('prof-nip');[cite: 1, 2]
-        if (officer && officer.nip && nipEl) nipEl.innerText = `NRPK. ${officer.nip}`;[cite: 1, 2]
-        const avatar = document.getElementById('prof-avatar');[cite: 1, 2]
-        if(avatar) avatar.innerText = state.user.charAt(0).toUpperCase();[cite: 1, 2]
-        calculateMonthlyAttendance();[cite: 1, 2]
+        if (!state.user) return;
+        document.getElementById('prof-name').innerText = state.user;
+        const off = state.data.descriptors.find(d => d.name === state.user);
+        if (off) document.getElementById('prof-nip').innerText = `NRPK. ${off.nip}`;
+        document.getElementById('prof-avatar').innerText = state.user.charAt(0).toUpperCase();
     }
 
-    function calculateMonthlyAttendance() {
-        if (!state.user || !state.data.logs) return;[cite: 1, 2]
-        const Bird = new Date();[cite: 1, 2]
-        const month = (Bird.getMonth() + 1).toString().padStart(2, '0');[cite: 1, 2]
-        const year = Bird.getFullYear().toString();[cite: 1, 2]
-        const monthlyLogs = state.data.logs.filter(l => {[cite: 1, 2]
-            const p = l.date.split('/');[cite: 1, 2]
-            return l.name === state.user && p[1] === month && p[2] === year;[cite: 1, 2]
+    function renderDailyLog() {
+        const c = document.getElementById('daily-log-container');
+        if (!c) return;
+        const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');
+        const logs = (state.data.logs || []).filter(l => l.name === state.user && l.date === today);
+        
+        let mText = "--:--", pText = "--:--";
+        logs.forEach(l => {
+            if (l.type === 'MASUK') mText = l.time;
+            if (l.type === 'PULANG') pText = l.time;
         });
-        const daysPresent = new Set(monthlyLogs.map(l => l.date)).size;[cite: 1, 2]
-        const workDays = 22; [cite: 1, 2]
-        const pct = Math.min(Math.round((daysPresent / workDays) * 100), 100);[cite: 1, 2]
-        const pctEl = document.getElementById('monthly-attendance-pct');[cite: 1, 2]
-        if(pctEl) pctEl.innerText = pct + "%";[cite: 1, 2]
-    }
+        document.getElementById('home-ket-masuk').innerText = mText;
+        document.getElementById('home-ket-pulang').innerText = pText;
 
-    function renderShiftInfo() {
-        const titleEl = document.getElementById('shift-day-title');[cite: 1, 2]
-        const container = document.getElementById('shift-items-container');[cite: 1, 2]
-        const footerNote = document.getElementById('shift-footer-note');[cite: 1, 2]
-        const badge = document.getElementById('session-indicator-badge');[cite: 1, 2]
-        const badgeText = document.getElementById('session-badge-text');[cite: 1, 2]
-        const countdownEl = document.getElementById('countdown-pulang');[cite: 1, 2]
-        const now = new Date();[cite: 1, 2]
-        const day = now.getDay();[cite: 1, 2]
-        const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];[cite: 1, 2]
-        if(titleEl) titleEl.innerText = `Jadwal Hari ${dayNames[day]}`;[cite: 1, 2]
-        if (day === 0 || day === 6) {[cite: 1, 2]
-            if(container) {[cite: 1, 2]
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-4 bg-red-50 rounded-2xl border border-red-100">
-                        <span class="text-2xl mb-1">🏠</span>
-                        <p class="text-[10px] font-black text-red-600 uppercase tracking-widest">Jadwal Kerja Tutup</p>
-                        <p class="text-[8px] font-bold text-red-400 uppercase mt-1">Sabtu & Minggu Libur</p>
-                    </div>
-                `;[cite: 1, 2]
-            }
-            if(footerNote) footerNote.style.display = 'none';[cite: 1, 2]
-            if(badge && badgeText) {[cite: 1, 2]
-                badge.classList.remove('active', 'waiting');[cite: 1, 2]
-                badge.classList.add('closed');[cite: 1, 2]
-                badgeText.innerText = "Sistem Libur";[cite: 1, 2]
-            }
-            if(countdownEl) countdownEl.innerText = "Libur";[cite: 1, 2]
-            return;[cite: 1, 2]
+        if (logs.length > 0) {
+            c.innerHTML = logs.map(l => `
+                <div class="log-card">
+                    <div><p class="text-[10px] font-black uppercase">${l.type}</p><p class="text-[8px] text-slate-400 font-bold">${l.date} | ${l.time}</p></div>
+                    <span class="text-[8px] font-black px-2 py-1 rounded bg-white border text-emerald-600">${l.status || 'OK'}</span>
+                </div>
+            `).join('');
+        } else {
+            c.innerHTML = '<p class="text-[9px] font-bold text-slate-300 text-center py-4 uppercase">Belum ada riwayat presensi</p>';
         }
-        if(footerNote) footerNote.style.display = 'block';[cite: 1, 2]
-        const cfg = state.data.config || {};[cite: 1, 2]
-        if (!cfg.SHIFT_DATA) return;[cite: 1, 2]
-        try {
-            const shift = typeof cfg.SHIFT_DATA === 'string' ? JSON.parse(cfg.SHIFT_DATA) : cfg.SHIFT_DATA;[cite: 1, 2]
-            const isFriday = (day === 5);[cite: 1, 2]
-            const data = isFriday ? shift.fri : shift.reg;[cite: 1, 2]
-            if(container) {[cite: 1, 2]
-                container.innerHTML = `
-                    <div class="shift-item">
-                        <span class="shift-label">Buka Absen Masuk</span>
-                        <span class="shift-value">${data.inStart}</span>
-                    </div>
-                    <div class="shift-item">
-                        <span class="shift-label">Batas Terlambat</span>
-                        <span class="shift-value highlight">${data.inLate}</span>
-                    </div>
-                    <div class="shift-item">
-                        <span class="shift-label">Sesi Absen Pulang</span>
-                        <span class="shift-value">${data.outStart} s/d ${data.outEnd}</span>
-                    </div>
-                `;[cite: 1, 2]
-            }
-            const currentTime = now.getHours() * 60 + now.getMinutes();[cite: 1, 2]
-            const parse = (t) => {
-                const [h, m] = t.split(':').map(Number);[cite: 1, 2]
-                return h * 60 + m;[cite: 1, 2]
-            };
-            const inS = parse(data.inStart);[cite: 1, 2]
-            const inL = parse(data.inLate);[cite: 1, 2]
-            const outS = parse(data.outStart);[cite: 1, 2]
-            const outE = parse(data.outEnd);[cite: 1, 2]
-            
-            if (badge && badgeText) {[cite: 1, 2]
-                badge.classList.remove('active', 'waiting', 'closed');[cite: 1, 2]
-                if (currentTime >= inS && currentTime <= inL) {[cite: 1, 2]
-                    badge.classList.add('active');[cite: 1, 2]
-                    badgeText.innerText = "SESI MASUK TERBUKA";[cite: 1, 2]
-                } else if (currentTime >= outS && currentTime <= outE) {[cite: 1, 2]
-                    badge.classList.add('active');[cite: 1, 2]
-                    badgeText.innerText = "SESI PULANG TERBUKA";[cite: 1, 2]
-                } else if (currentTime < inS) {[cite: 1, 2]
-                    badge.classList.add('waiting');[cite: 1, 2]
-                    badgeText.innerText = `MENUNGGU MASUK (${data.inStart})`;[cite: 1, 2]
-                } else if (currentTime > inL && currentTime < outS) {[cite: 1, 2]
-                    badge.classList.add('waiting');[cite: 1, 2]
-                    badgeText.innerText = `MENUNGGU PULANG (${data.outStart})`;[cite: 1, 2]
-                } else {
-                    badge.classList.add('closed');[cite: 1, 2]
-                    badgeText.innerText = "SESI ABSENSI TUTUP";[cite: 1, 2]
-                }
-            }
-
-            if(countdownEl) {[cite: 1, 2]
-                if(currentTime < outS) {[cite: 1, 2]
-                    const diff = outS - currentTime;[cite: 1, 2]
-                    const h = Math.floor(diff / 60);[cite: 1, 2]
-                    const m = diff % 60;[cite: 1, 2]
-                    countdownEl.innerText = `${h}j ${m}m lagi`;[cite: 1, 2]
-                } else if (currentTime >= outS && currentTime <= outE) {[cite: 1, 2]
-                    countdownEl.innerText = "Sesi Pulang!";[cite: 1, 2]
-                    countdownEl.classList.add('text-emerald-400');[cite: 1, 2]
-                } else {
-                    countdownEl.innerText = "Selesai";[cite: 1, 2]
-                }
-            }
-        } catch(e) { console.log("Shift parse error", e); }[cite: 1, 2]
-    }
-
-    function openShiftModal() {
-        triggerHaptic("confirm");[cite: 1, 2]
-        const now = new Date();[cite: 1, 2]
-        const day = now.getDay();[cite: 1, 2]
-        const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];[cite: 1, 2]
-        const modalTitle = document.getElementById('modal-shift-day-text');[cite: 1, 2]
-        const modalContainer = document.getElementById('modal-shift-details-container');[cite: 1, 2]
-        if(modalTitle) modalTitle.innerText = `Jadwal Operasional ${dayNames[day]}`;[cite: 1, 2]
-        if (day === 0 || day === 6) {[cite: 1, 2]
-            if(modalContainer) {[cite: 1, 2]
-                modalContainer.innerHTML = `
-                    <div class="bg-red-50 p-6 rounded-2xl border border-red-100 text-center">
-                        <p class="text-sm font-black text-red-600 uppercase mb-1">Hari Libur</p>
-                        <p class="text-[9px] font-bold text-red-400 uppercase leading-relaxed">Pelayanan administratif dan absensi rutin tutup pada hari Sabtu & Minggu.</p>
-                    </div>
-                `;[cite: 1, 2]
-            }
-            document.getElementById('modal-shift-info').style.display = 'flex';[cite: 1, 2]
-            return;[cite: 1, 2]
-        }
-        const cfg = state.data.config || {};[cite: 1, 2]
-        if (!cfg.SHIFT_DATA) return showAlert("Opps", "Data jadwal belum tersedia.");[cite: 1, 2]
-        try {
-            const shift = typeof cfg.SHIFT_DATA === 'string' ? JSON.parse(cfg.SHIFT_DATA) : cfg.SHIFT_DATA;[cite: 1, 2]
-            const isFriday = (day === 5);[cite: 1, 2]
-            const data = isFriday ? shift.fri : shift.reg;[cite: 1, 2]
-            if(modalContainer) {[cite: 1, 2]
-                modalContainer.innerHTML = `
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <p class="text-[8px] font-black text-slate-400 uppercase mb-2">Sesi Masuk</p>
-                        <div class="flex justify-between items-end">
-                            <span class="text-lg font-black text-slate-800">${data.inStart}</span>
-                            <span class="text-[9px] font-bold text-slate-400 italic">Hingga <span class="text-pink-600">${data.inLate}</span></span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <p class="text-[8px] font-black text-slate-400 uppercase mb-2">Sesi Pulang</p>
-                        <div class="flex justify-between items-end">
-                            <span class="text-lg font-black text-slate-800">${data.outStart} - ${data.outEnd}</span>
-                            <span class="text-[9px] font-bold text-slate-400 italic">Waktu Pulang</span>
-                        </div>
-                    </div>
-                `;[cite: 1, 2]
-            }
-            document.getElementById('modal-shift-info').style.display = 'flex';[cite: 1, 2]
-        } catch(e) { showAlert("Error", "Gagal membaca jadwal."); }[cite: 1, 2]
-    }
-
-    function closeShiftModal() { document.getElementById('modal-shift-info').style.display = 'none'; }[cite: 1, 2]
-
-    function setFilterDefault() {
-        const now = new Date();[cite: 1, 2]
-        const bulan = (now.getMonth() + 1).toString().padStart(2, '0');[cite: 1, 2]
-        const tahun = now.getFullYear().toString();[cite: 1, 2]
-        const fB = document.getElementById('filter-bulan');[cite: 1, 2]
-        const fT = document.getElementById('filter-tahun');[cite: 1, 2]
-        const fD = document.getElementById('filter-tanggal');[cite: 1, 2]
-        const fS = document.getElementById('filter-status');[cite: 1, 2]
-        if(fB) fB.value = bulan;[cite: 1, 2]
-        if(fT) fT.value = tahun;[cite: 1, 2]
-        if(fD) fD.value = "";[cite: 1, 2]
-        if(fS) fS.value = "SEMUA";[cite: 1, 2]
-    }
-
-    function handleFilterChange(trigger) { 
-        if (trigger === 'date') {[cite: 1, 2]
-            const dV = document.getElementById('filter-tanggal');[cite: 1, 2]
-            const dateVal = dV ? dV.value : "";[cite: 1, 2]
-            if (dateVal) {[cite: 1, 2]
-                const d = new Date(dateVal);[cite: 1, 2]
-                const fB = document.getElementById('filter-bulan');[cite: 1, 2]
-                const fT = document.getElementById('filter-tahun');[cite: 1, 2]
-                if(fB) fB.value = (d.getMonth() + 1).toString().padStart(2, '0');[cite: 1, 2]
-                if(fT) fT.value = d.getFullYear().toString();[cite: 1, 2]
-            } 
-        } else if (trigger === 'month' || trigger === 'year') {[cite: 1, 2]
-            const fD = document.getElementById('filter-tanggal');[cite: 1, 2]
-            if (fD) fD.value = "";[cite: 1, 2]
-        }
-        renderRekap();[cite: 1, 2]
     }
 
     function renderRekap() {
-        const tbody = document.getElementById('rekap-table-body');[cite: 1, 2]
-        if(!tbody) return;[cite: 1, 2]
-        
-        const filterBulan = document.getElementById('filter-bulan').value;[cite: 1, 2]
-        const filterTahun = document.getElementById('filter-tahun').value;[cite: 1, 2]
-        const filterTanggal = document.getElementById('filter-tanggal').value;[cite: 1, 2]
-        const filterStatus = document.getElementById('filter-status').value;[cite: 1, 2]
-        
-        const grouped = {};[cite: 1, 2]
-        let formattedDateFilter = "";[cite: 1, 2]
-        if (filterTanggal) {[cite: 1, 2]
-            const d = new Date(filterTanggal);[cite: 1, 2]
-            const dd = d.getDate().toString().padStart(2, '0');[cite: 1, 2]
-            const mm = (d.getMonth() + 1).toString().padStart(2, '0');[cite: 1, 2]
-            const yyyy = d.getFullYear();[cite: 1, 2]
-            formattedDateFilter = `${dd}/${mm}/${yyyy}`;[cite: 1, 2]
-        }
-
-        let countHadir = 0;[cite: 1, 2]
-        let countTerlambat = 0;[cite: 1, 2]
-        let countKhusus = 0;[cite: 1, 2]
-
-        state.data.logs.forEach(l => {[cite: 1, 2]
-            if (l.name !== state.user) return;[cite: 1, 2]
-            const dateParts = l.date.split('/');[cite: 1, 2]
-            if (dateParts.length < 3) return;[cite: 1, 2]
-            
-            const logDay = dateParts[0].padStart(2, '0');[cite: 1, 2]
-            const logMonth = dateParts[1].padStart(2, '0');[cite: 1, 2]
-            const logYear = dateParts[2];[cite: 1, 2]
-            
-            if (formattedDateFilter) {[cite: 1, 2]
-                if (l.date !== formattedDateFilter) return;[cite: 1, 2]
-            } else { 
-                if (logMonth !== filterBulan || logYear !== filterTahun) return;[cite: 1, 2]
-            }
-            
-            if (filterStatus !== "SEMUA") {[cite: 1, 2]
-                if (filterStatus === "HADIR" && l.type === "DL") return;[cite: 1, 2]
-                if (filterStatus === "DL" && l.type !== "DL") return;[cite: 1, 2]
-                if (filterStatus === "TERLAMBAT" && (!l.status || !l.status.includes("TERLAMBAT"))) return;[cite: 1, 2]
-            }
-            
-            const key = `${l.date}_${l.name}`;[cite: 1, 2]
-            if (!grouped[key]) {[cite: 1, 2]
-                grouped[key] = {[cite: 1, 2]
-                    name: l.name,[cite: 1, 2]
-                    date: l.date,[cite: 1, 2]
-                    masuk: "-",[cite: 1, 2]
-                    pulang: "-",[cite: 1, 2]
-                    ket: "-",[cite: 1, 2]
-                    timestamp: new Date(logYear, parseInt(logMonth) - 1, parseInt(logDay)).getTime()[cite: 1, 2]
-                }; 
-            }
-            
-            const fixedTime = formatTimeFix(l.time);[cite: 1, 2]
-            if (l.type === "MASUK") grouped[key].masuk = fixedTime;[cite: 1, 2]
-            if (l.type === "PULANG") grouped[key].pulang = fixedTime;[cite: 1, 2]
-            
-            if (["DL", "CUTI", "IJIN", "SAKIT"].includes(l.type)) {[cite: 1, 2]
-                grouped[key].masuk = l.type;[cite: 1, 2]
-                grouped[key].pulang = l.type;[cite: 1, 2]
-                grouped[key].ket = l.note || l.type;[cite: 1, 2]
-            }
-            if (l.status && l.status.includes("TERLAMBAT")) grouped[key].ket = l.status;[cite: 1, 2]
-        });
-
-        const resultArr = Object.values(grouped).sort((a, b) => b.timestamp - a.timestamp);[cite: 1, 2]
-
-        resultArr.forEach(r => {[cite: 1, 2]
-            if (["DL", "CUTI", "IJIN", "SAKIT"].includes(r.masuk)) {[cite: 1, 2]
-                countKhusus++;[cite: 1, 2]
-            } else if (r.masuk !== "-") {[cite: 1, 2]
-                if (r.ket.includes("TERLAMBAT")) {[cite: 1, 2]
-                    countTerlambat++;[cite: 1, 2]
-                } else {
-                    countHadir++;[cite: 1, 2]
-                }
-            }
-        });
-
-        document.getElementById('stat-hadir').innerText = countHadir;[cite: 1, 2]
-        document.getElementById('stat-terlambat').innerText = countTerlambat;[cite: 1, 2]
-        document.getElementById('stat-khusus').innerText = countKhusus;[cite: 1, 2]
-
-        tbody.innerHTML = resultArr.length > 0 ? resultArr.map(r => {[cite: 1, 2]
-            let badgeClass = "text-emerald-600 bg-emerald-50 border-emerald-200";[cite: 1, 2]
-            if (r.ket.includes("TERLAMBAT")) {[cite: 1, 2]
-                badgeClass = "text-rose-600 bg-rose-50 border-rose-200";[cite: 1, 2]
-            } else if (["DL", "CUTI", "IJIN", "SAKIT"].includes(r.masuk)) {[cite: 1, 2]
-                badgeClass = "text-amber-600 bg-amber-50 border-amber-200";[cite: 1, 2]
-            }
-
-            return `
-                <tr class="hover:bg-slate-50/80 transition-colors">
-                    <td class="font-bold text-slate-700">${r.name}</td>
-                    <td class="text-slate-500">${r.date}</td>
-                    <td class="font-mono text-slate-800">${r.masuk} - ${r.pulang}</td>
-                    <td>
-                        <span class="px-2 py-0.5 rounded-md text-[8px] font-black border ${badgeClass}">
-                            ${r.ket === "-" ? "HADIR" : r.ket}
-                        </span>
-                    </td>
+        const tb = document.getElementById('rekap-table-body');
+        if (!tb) return;
+        const logs = (state.data.logs || []).filter(l => l.name === state.user);
+        if (logs.length > 0) {
+            tb.innerHTML = logs.map(l => `
+                <tr>
+                    <td class="font-bold">${l.name}</td>
+                    <td>${l.date}</td>
+                    <td>${l.time}</td>
+                    <td><span class="px-2 py-0.5 rounded text-[8px] font-black bg-pink-50 text-pink-600">${l.type}</span></td>
                 </tr>
-            `;[cite: 1, 2]
-        }).join('') : '<tr><td colspan="4" class="text-center py-10 text-slate-400 font-bold uppercase">Data tidak ditemukan</td></tr>';[cite: 1, 2]
+            `).join('');
+        } else {
+            tb.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-400 font-bold">Data kosong</td></tr>';
+        }
     }
 
     function handleAdminTrigger() {
-        state.adminTriggerCount++;[cite: 1, 2]
-        triggerHaptic("confirm");[cite: 1, 2]
-        if (state.adminTriggerCount >= 3) {[cite: 1, 2]
-            state.adminModeEnabled = !state.adminModeEnabled;[cite: 1, 2]
-            state.adminTriggerCount = 0;[cite: 1, 2]
-            soundSuccess();[cite: 1, 2]
-            if (state.adminModeEnabled) {[cite: 1, 2]
-                showAlert("Sistem Terbuka", "Mode Admin Aktif ✨");[cite: 1, 2]
-                document.getElementById('select-user').classList.remove('hidden');[cite: 1, 2]
-            } else {
-                showAlert("Sistem Terkunci", "Mode Admin Nonaktif 🔒");[cite: 1, 2]
-                document.getElementById('select-user').classList.add('hidden');[cite: 1, 2]
-            }
-            renderUserSelect();[cite: 1, 2]
+        state.adminTriggerCount++;
+        if (state.adminTriggerCount >= 3) {
+            state.adminTriggerCount = 0;
+            const sel = document.getElementById('select-user');
+            sel.classList.toggle('hidden');
+            renderUserSelect();
+            showAlert("Admin Mode", "Menu Pendaftaran Akun Terbuka!");
         }
     }
 
     function renderUserSelect() {
-        const sel = document.getElementById('select-user');[cite: 1, 2]
-        if(!sel) return;[cite: 1, 2]
-        let html = '<option value="">-- Menu Khusus --</option>';[cite: 1, 2]
-        const canReg = state.data.config.ALLOW_REG === true || state.data.config.ALLOW_REG === "true";[cite: 1, 2]
-        if (state.adminModeEnabled) {[cite: 1, 2]
-            html += '<option value="ADMIN" style="color:#db2777; font-weight:bold;">🛠️ LOGIN ADMIN MANUAL</option>';[cite: 1, 2]
-            if(canReg) html += '<option value="NEW_REGISTER" style="color:blue; font-weight:bold;">+ DAFTAR AKUN BARU</option>';[cite: 1, 2]
-            if (state.data && state.data.officers) {[cite: 1, 2]
-                html += state.data.officers.map(o => `<option value="${o}">${o}</option>`).join('');[cite: 1, 2]
-            }
-        }
-        sel.innerHTML = html;[cite: 1, 2]
+        const sel = document.getElementById('select-user');
+        if (!sel) return;
+        let html = '<option value="">-- Menu Khusus --</option>';
+        html += '<option value="NEW_REGISTER" style="color:#db2777; font-weight:bold;">+ DAFTAR AKUN WAJAH BARU</option>';
+        (state.data.officers || []).forEach(o => {
+            html += `<option value="${o}">${o}</option>`;
+        });
+        sel.innerHTML = html;
     }
 
-    async function getCameraStream(targetId) {
-        try {
-            const videoEl = document.getElementById(targetId);[cite: 1, 2]
-            videoEl.classList.remove('visible');  [cite: 1, 2]
-            
-            if (state.stream) {[cite: 1, 2]
-                state.stream.getTracks().forEach(track => track.stop());[cite: 1, 2]
-            }
+    function handleSelectChange(v) {
+        if (v === 'NEW_REGISTER') openRegister();
+    }
 
-            const constraints = { 
-                video: { facingMode: "user", width: { ideal: 640, max: 640 }, height: { ideal: 480, max: 480 }, frameRate: { ideal: 30, max: 30 } },
+    async function getCameraStream(id) {
+        try {
+            if (state.stream) state.stream.getTracks().forEach(t => t.stop());
+            const constraints = {
+                video: { facingMode: "user", width: { ideal: 640, max: 640 }, height: { ideal: 480, max: 480 } },
                 audio: false
             };
-            
             state.stream = await navigator.mediaDevices.getUserMedia(constraints);
-            videoEl.srcObject = state.stream;[cite: 1, 2]
-
+            const vid = document.getElementById(id);
+            vid.srcObject = state.stream;
             return new Promise((resolve) => {
-                videoEl.onloadedmetadata = () => { 
-                    videoEl.play();[cite: 1, 2]
-                    videoEl.classList.add('visible');[cite: 1, 2]
-                    resolve(true); 
-                };
+                vid.onloadedmetadata = () => { vid.play(); resolve(true); };
             });
-        } catch (err) {
-            showAlert("Gagal Kamera", "Izin kamera diperlukan.");[cite: 1, 2]
-            return false;[cite: 1, 2]
+        } catch(e) {
+            showAlert("Kamera", "Izin kamera diperlukan!");
+            return false;
         }
     }
-
-    function isFaceAligned(detection, videoWidth, videoHeight) {
-        if (!detection) return { aligned: false, status: "MANCARI WAJAH...", scale: 1.0, css: "invalid" };
-        const { x, y, width, height } = detection.detection.box;[cite: 1, 2]
-        const centerX = x + width / 2;[cite: 1, 2]
-        const centerY = y + height / 2;[cite: 1, 2]
-        const isCentered = (centerX > videoWidth * 0.22 && centerX < videoWidth * 0.78) && (centerY > videoHeight * 0.22 && centerY < videoHeight * 0.78);[cite: 1, 2]
-        let targetScale = 1.0;[cite: 1, 2]
-        const faceWidthRatio = width / videoWidth;[cite: 1, 2]
-        if (faceWidthRatio < 0.28) targetScale = 2.0;[cite: 1, 2]
-        else if (faceWidthRatio > 0.58) targetScale = 0.8;[cite: 1, 2]
-        else targetScale = 1.2;[cite: 1, 2]
-        if (!isCentered) return { aligned: false, status: "POSISIKAN WAJAH DI TENGAH LAYAR", scale: targetScale, css: "invalid" };[cite: 1, 2]
-        if (width < videoWidth * 0.25) return { aligned: false, status: "TERLALU JAUH! MENDEKAT KE KAMERA", scale: targetScale, css: "invalid" };[cite: 1, 2]
-        if (width > videoWidth * 0.65) return { aligned: false, status: "TERLALU DEKAT! MUNDUR SEDIKIT", scale: targetScale, css: "invalid" };[cite: 1, 2]
-        return { aligned: true, status: "POSISI SEMPURNA! MOHON JANGAN BERGERAK... 🔒", scale: targetScale, css: "valid" };[cite: 1, 2]
-    }
-
-    function checkShiftTime() {
-        if (state.data.config.IS_HOLIDAY === true) {[cite: 1, 2]
-            return { allow: false, msg: "Hari ini adalah Libur Nasional." };[cite: 1, 2]
-        }
-
-        const now = new Date();[cite: 1, 2]
-        const day = now.getDay();[cite: 1, 2]
-        if (day === 0 || day === 6) return { allow: false, msg: "Hari ini libur (Sabtu/Minggu)." };[cite: 1, 2]
-        const currentTime = now.getHours() * 60 + now.getMinutes();[cite: 1, 2]
-        const cfg = state.data.config || {};[cite: 1, 2]
-        if (!cfg.SHIFT_DATA) return { allow: true };[cite: 1, 2]
-        const shift = typeof cfg.SHIFT_DATA === 'string' ? JSON.parse(cfg.SHIFT_DATA) : cfg.SHIFT_DATA;[cite: 1, 2]
-        const isFriday = (day === 5);[cite: 1, 2]
-        const data = isFriday ? shift.fri : shift.reg;[cite: 1, 2]
-        const parse = (t) => {
-            const [h, m] = t.split(':').map(Number);[cite: 1, 2]
-            return h * 60 + m;[cite: 1, 2]
-        };
-        const inStart = parse(data.inStart);[cite: 1, 2]
-        const inLateLimit = parse(data.inLate);[cite: 1, 2]
-        const outStart = parse(data.outStart);[cite: 1, 2]
-        const outEnd = parse(data.outEnd);[cite: 1, 2]
-        const isMasukTime = currentTime >= inStart && currentTime <= inLateLimit;[cite: 1, 2]
-        const isPulangTime = currentTime >= outStart && currentTime <= outEnd;[cite: 1, 2]
-        if (isMasukTime) return { allow: true, type: "MASUK" };[cite: 1, 2]
-        if (isPulangTime) return { allow: true, type: "PULANG" };[cite: 1, 2]
-        let msg = (currentTime < inStart) ? `Sesi belum dibuka. Kembali jam ${data.inStart}.` :[cite: 1, 2]
-                  (currentTime > inLateLimit && currentTime < outStart) ? `Batas terlambat lewat. Pulang jam ${data.outStart}.` :[cite: 1, 2]
-                  (currentTime > outEnd) ? "Sesi hari ini ditutup." : "Bukan jadwal absensi.";[cite: 1, 2]
-        return { allow: false, msg: msg };[cite: 1, 2]
-    }
-
-    function handleAttendanceTrigger() {
-        triggerHaptic("confirm");[cite: 1, 2]
-        const todayStr = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');[cite: 1, 2]
-        
-        if (state.data.logs.some(l => l.name === state.user && l.date === todayStr && ["DL", "CUTI", "IJIN", "SAKIT"].includes(l.type))) {[cite: 1, 2]
-            showAlert("Ditolak", "Anda sudah mengajukan status khusus (DL/CUTI/IJIN/SAKIT) hari ini.");[cite: 1, 2]
-            return;[cite: 1, 2]
-        }
-        
-        const timeCheck = checkShiftTime();[cite: 1, 2]
-        if (!timeCheck.allow) { showAlert("Ditolak", timeCheck.msg); return; }[cite: 1, 2]
-        const bypassGPS = state.data.config.BYPASS_GPS === true || state.data.config.BYPASS_GPS === "true";[cite: 1, 2]
-        if (!bypassGPS) {[cite: 1, 2]
-            if (!state.currentLocation) { showAlert("Opps", "Mendeteksi koordinat GPS..."); return; }[cite: 1, 2]
-            const currentDist = calculateDistance(state.currentLocation.coords.latitude, state.currentLocation.coords.longitude, TARGET_LOC.lat, TARGET_LOC.lng);[cite: 1, 2]
-            if (currentDist > TARGET_LOC.radius) { showRadiusModal(currentDist); return; }[cite: 1, 2]
-        }
-        startFaceAuth('ABSENSI');[cite: 1, 2]
-    }
-
-    function showRadiusModal(dist) {
-        soundError(); triggerHaptic("error");[cite: 1, 2]
-        document.getElementById('radius-distance-val').innerText = `${dist} Meter`;[cite: 1, 2]
-        document.getElementById('radius-limit-val').innerText = TARGET_LOC.radius;[cite: 1, 2]
-        document.getElementById('modal-radius-error').style.display = 'flex';[cite: 1, 2]
-    }
-    function closeRadiusModal() { document.getElementById('modal-radius-error').style.display = 'none'; }[cite: 1, 2]
 
     async function startFaceAuth(mode) {
-        state.authMode = mode;[cite: 1, 2]
-        triggerHaptic("confirm");[cite: 1, 2]
-        const val = document.getElementById('select-user').value;[cite: 1, 2]
-        if (mode === 'LOGIN' && val === 'NEW_REGISTER') return openRegister();[cite: 1, 2]
-        if (mode === 'LOGIN' && val === 'ADMIN') return openAdminLogin();[cite: 1, 2]
-        
-        document.getElementById('face-modal-title').innerText = mode === 'LOGIN' ? "Verifikasi Masuk" : "Verifikasi Absensi";[cite: 1, 2]
-        const loginOval = document.getElementById('login-oval');[cite: 1, 2]
-        if(loginOval) loginOval.className = "face-oval";[cite: 1, 2]
-        
-        document.getElementById('modal-face').style.display = 'flex';[cite: 1, 2]
+        state.authMode = mode;
+        document.getElementById('modal-face').style.display = 'flex';
         document.getElementById('face-status-text').innerText = "Membuka sensor kamera...";
-        
-        const streamReady = await getCameraStream('video-preview');
-        if (!streamReady) return closeFaceModal();[cite: 1, 2]
 
-        if(!state.modelsLoaded) {
-            document.getElementById('face-status-text').innerText = "Menyiapkan AI...";
+        const streamReady = await getCameraStream('video-preview');
+        if (!streamReady) { closeFaceModal(); return; }
+
+        if (!state.modelsLoaded) {
+            document.getElementById('face-status-text').innerText = "Memuat modul pendeteksi...";
             await loadModels();
         }
 
-        document.getElementById('face-scanner-line').style.display = 'block';[cite: 1, 2]
-        detectFaceLoop();[cite: 1, 2]
+        document.getElementById('face-scanner-line').style.display = 'block';
+        document.getElementById('face-status-text').innerText = "Arahkan wajah ke kamera...";
+        detectFaceLoop();
     }
 
     async function detectFaceLoop() {
-        const video = document.getElementById('video-preview');[cite: 1, 2]
-        const btn = document.getElementById('btn-face-action');[cite: 1, 2]
-        const statusEl = document.getElementById('face-status-text');[cite: 1, 2]
-        const oval = document.getElementById('login-oval');[cite: 1, 2]
-        
-        if (!state.stream || !video || video.paused || document.getElementById('modal-face').style.display === 'none') return;[cite: 1, 2]
+        const vid = document.getElementById('video-preview');
+        const btn = document.getElementById('btn-face-action');
+        const st = document.getElementById('face-status-text');
+        const oval = document.getElementById('login-oval');
+        if (!state.stream || document.getElementById('modal-face').style.display === 'none') return;
 
-        const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ 
-            inputSize: 128, 
-            scoreThreshold: 0.4 
-        })).withFaceLandmarks().withFaceDescriptor();[cite: 1, 2]
-
-        const alignment = isFaceAligned(detection, video.videoWidth, video.videoHeight);
-        
-        if(statusEl) {[cite: 1, 2]
-            statusEl.innerText = alignment.status;[cite: 1, 2]
-            if(alignment.css === "valid") {[cite: 1, 2]
-                statusEl.className = "text-[9px] text-center mt-4 font-black text-emerald-600 tracking-wider uppercase bg-emerald-50 py-2 rounded-xl transition-all border border-emerald-200";[cite: 1, 2]
-            } else {
-                statusEl.className = "text-[9px] text-center mt-4 font-black text-rose-500 tracking-wider uppercase bg-rose-50 py-2 rounded-xl transition-all border border-rose-100";[cite: 1, 2]
-            }
-        }
-
-        if (alignment.aligned) {[cite: 1, 2]
-            state.currentDescriptor = detection.descriptor;[cite: 1, 2]
-            if(oval) { oval.classList.remove('invalid'); oval.classList.add('valid'); }[cite: 1, 2]
-            
-            if (state.authMode === 'ABSENSI') {[cite: 1, 2]
-                confirmFaceAuth();[cite: 1, 2]
-                return; 
-            }
-            if(btn) { btn.disabled = false; btn.innerText = "KENALI SAYA & MASUK"; }[cite: 1, 2]
+        const d = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({ inputSize: 128, scoreThreshold: 0.4 })).withFaceLandmarks().withFaceDescriptor();
+        if (d) {
+            state.currentDescriptor = d.descriptor;
+            oval.classList.add('valid');
+            st.innerText = "WAJAH TERDETEKSI!";
+            st.className = "text-[9px] text-center mt-4 font-black text-emerald-600 uppercase bg-emerald-50 py-2 rounded-xl";
+            btn.disabled = false;
+            btn.innerText = "KONFIRMASI & MASUK";
         } else {
-            if(oval) {[cite: 1, 2]
-                oval.classList.remove('valid');[cite: 1, 2]
-                if (detection) oval.classList.add('invalid');[cite: 1, 2]
-                else oval.classList.remove('invalid');[cite: 1, 2]
-            }
-            if(btn) { btn.disabled = true; btn.innerText = "MENCARI WAJAH..."; }[cite: 1, 2]
-            state.faceDetectionFrame = requestAnimationFrame(detectFaceLoop);[cite: 1, 2]
+            oval.classList.remove('valid');
+            st.innerText = "ARAHKAN WAJAH KE KAMERA...";
+            btn.disabled = true;
+            requestAnimationFrame(detectFaceLoop);
         }
     }
 
     async function confirmFaceAuth() {
-        triggerHaptic("confirm");[cite: 1, 2]
-        const btn = document.getElementById('btn-face-action');[cite: 1, 2]
-        if(btn) btn.disabled = true;[cite: 1, 2]
-        let selectedUser = document.getElementById('select-user').value;[cite: 1, 2]
         const threshold = 0.45;
-        try {
-            let matchedUser = null;[cite: 1, 2]
-            if (state.authMode === 'ABSENSI') {[cite: 1, 2]
-                const off = state.data.descriptors.find(d => d.name === state.user);[cite: 1, 2]
-                if (off && off.descriptor && (new faceapi.FaceMatcher(new Float32Array(JSON.parse(off.descriptor)), threshold)).findBestMatch(state.currentDescriptor).label !== 'unknown') matchedUser = state.user;[cite: 1, 2]
-            } else if (selectedUser && selectedUser !== "ADMIN" && selectedUser !== "NEW_REGISTER") {[cite: 1, 2]
-                const off = state.data.descriptors.find(d => d.name === selectedUser);[cite: 1, 2]
-                if (off && off.descriptor && (new faceapi.FaceMatcher(new Float32Array(JSON.parse(off.descriptor)), threshold)).findBestMatch(state.currentDescriptor).label !== 'unknown') matchedUser = selectedUser;[cite: 1, 2]
-            } else {
-                for (const off of state.data.descriptors) {[cite: 1, 2]
-                    if (off.descriptor && (new faceapi.FaceMatcher(new Float32Array(JSON.parse(off.descriptor)), threshold)).findBestMatch(state.currentDescriptor).label !== 'unknown') { matchedUser = off.name; break; }[cite: 1, 2]
-                }
-            }
-            if (matchedUser) {[cite: 1, 2]
-                closeFaceModal();[cite: 1, 2]
-                if (state.authMode === 'LOGIN') {[cite: 1, 2]
-                    state.user = matchedUser; localStorage.setItem('gardena_user', matchedUser);[cite: 1, 2]
-                    setTimeout(() => showView('profile'), 300); showAlert("Berhasil", "Selamat datang, " + matchedUser);[cite: 1, 2]
-                } else { processAttendance("FACE"); }[cite: 1, 2]
-            } else { 
-                soundError(); triggerHaptic("error"); showAlert("Akses Ditolak", "Wajah tidak dikenali!");[cite: 1, 2]
-                if(btn) { btn.disabled = false; btn.innerText = "COBA LAGI"; } detectFaceLoop();[cite: 1, 2]
-            }
-        } catch (e) { soundError(); showAlert("Error", "Gagal memproses AI."); if(btn) btn.disabled = false; }[cite: 1, 2]
-    }
-
-    function openAdminLogin() { document.getElementById('modal-admin-login').style.display = 'flex'; document.getElementById('admin-pin').value = ""; }[cite: 1, 2]
-    function closeAdminLogin() { document.getElementById('modal-admin-login').style.display = 'none'; const s = document.getElementById('select-user'); if(s) s.value = ""; }[cite: 1, 2]
-    function processAdminLogin() { if (document.getElementById('admin-pin').value === ADMIN_PASSWORD) { window.location.href = 'dasbordadmin.html'; } else { showAlert("Ditolak", "PIN Salah!"); } }[cite: 1, 2]
-
-    function openLogoutModal() { triggerHaptic("confirm"); document.getElementById('modal-logout').style.display = 'flex'; }[cite: 1, 2]
-    function closeLogoutModal() { document.getElementById('modal-logout').style.display = 'none'; }[cite: 1, 2]
-    function logout() { 
-        triggerHaptic("confirm"); if(state.geoWatchId) navigator.geolocation.clearWatch(state.geoWatchId);[cite: 1, 2]
-        localStorage.removeItem('gardena_user'); state.user = null; state.adminModeEnabled = false;[cite: 1, 2]
-        document.getElementById('select-user').classList.add('hidden'); closeLogoutModal(); showView('login'); renderUserSelect();[cite: 1, 2]
-    }
-
-    function closeFaceModal() {
-        if(state.stream) state.stream.getTracks().forEach(t => t.stop());[cite: 1, 2]
-        if(state.faceDetectionFrame) cancelAnimationFrame(state.faceDetectionFrame);[cite: 1, 2]
-        state.stream = null; document.getElementById('modal-face').style.display = 'none';[cite: 1, 2]
-        document.getElementById('face-scanner-line').style.display = 'none';[cite: 1, 2]
-    }
-
-    function handleSelectChange(v) { triggerHaptic("confirm"); if (v === 'NEW_REGISTER') openRegister(); if (v === 'ADMIN') openAdminLogin(); }[cite: 1, 2]
-
-    async function openRegister() {
-        document.getElementById('modal-register').style.display = 'flex';[cite: 1, 2]
-        const regOval = document.getElementById('reg-oval');[cite: 1, 2]
-        if(regOval) regOval.className = "face-oval";[cite: 1, 2]
-        
-        if (await getCameraStream('video-register')) { 
-            if(!state.modelsLoaded) await loadModels();
-            document.getElementById('reg-scanner-line').style.display = 'block'; 
-            detectFaceLoopRegister(); 
-        }[cite: 1, 2]
-    }
-
-    async function detectFaceLoopRegister() {
-        const v = document.getElementById('video-register');[cite: 1, 2]
-        const b = document.getElementById('btn-reg-save');[cite: 1, 2]
-        const s = document.getElementById('reg-status-text');[cite: 1, 2]
-        const o = document.getElementById('reg-oval');[cite: 1, 2]
-        if (!state.stream || !v || v.paused || document.getElementById('modal-register').style.display === 'none') return;[cite: 1, 2]
-        const d = await faceapi.detectSingleFace(v, new faceapi.TinyFaceDetectorOptions({ inputSize: 128, scoreThreshold: 0.4 })).withFaceLandmarks().withFaceDescriptor();[cite: 1, 2]
-        const a = isFaceAligned(d, v.videoWidth, v.videoHeight);
-        
-        if(s) {[cite: 1, 2]
-            s.innerText = a.status;[cite: 1, 2]
-            if(a.css === "valid") {[cite: 1, 2]
-                s.className = "text-[9px] text-center mt-4 font-black text-emerald-600 tracking-wider uppercase bg-emerald-50 py-2 rounded-xl transition-all border border-emerald-200";[cite: 1, 2]
-            } else {
-                s.className = "text-[9px] text-center mt-4 font-black text-rose-500 tracking-wider uppercase bg-rose-50 py-2 rounded-xl transition-all border border-rose-100";[cite: 1, 2]
+        let matched = null;
+        for (const off of state.data.descriptors) {
+            if (off.descriptor) {
+                try {
+                    const descArray = new Float32Array(JSON.parse(off.descriptor));
+                    const matcher = new faceapi.FaceMatcher(descArray, threshold);
+                    if (matcher.findBestMatch(state.currentDescriptor).label !== 'unknown') {
+                        matched = off.name;
+                        break;
+                    }
+                } catch(e){}
             }
         }
 
-        if (a.aligned) {[cite: 1, 2]
-            state.currentDescriptor = d.descriptor;[cite: 1, 2]
-            if(o) { o.classList.remove('invalid'); o.classList.add('valid'); }[cite: 1, 2]
-            if(b) b.disabled = false;[cite: 1, 2]
-        } else {
-            if(o) {[cite: 1, 2]
-                o.classList.remove('valid');[cite: 1, 2]
-                if (d) o.classList.add('invalid');[cite: 1, 2]
-                else o.classList.remove('invalid');[cite: 1, 2]
+        if (matched) {
+            closeFaceModal();
+            if (state.authMode === 'LOGIN') {
+                state.user = matched;
+                localStorage.setItem('gardena_user', matched);
+                showView('profile');
+                showAlert("Sukses", "Selamat datang, " + matched);
+            } else {
+                saveAttendanceRecord();
             }
-            if(b) b.disabled = true; state.faceDetectionFrame = requestAnimationFrame(detectFaceLoopRegister);[cite: 1, 2]
+        } else {
+            showAlert("Ditolak", "Wajah belum terdaftar! Silakan daftar akun baru.");
+        }
+    }
+
+    function closeFaceModal() {
+        if (state.stream) state.stream.getTracks().forEach(t => t.stop());
+        state.stream = null;
+        document.getElementById('modal-face').style.display = 'none';
+        document.getElementById('face-scanner-line').style.display = 'none';
+    }
+
+    async function openRegister() {
+        document.getElementById('modal-register').style.display = 'flex';
+        const streamReady = await getCameraStream('video-register');
+        if (!streamReady) { closeRegister(); return; }
+        if (!state.modelsLoaded) await loadModels();
+        detectRegisterLoop();
+    }
+
+    async function detectRegisterLoop() {
+        const vid = document.getElementById('video-register');
+        const btn = document.getElementById('btn-reg-save');
+        const oval = document.getElementById('reg-oval');
+        if (!state.stream || document.getElementById('modal-register').style.display === 'none') return;
+
+        const d = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({ inputSize: 128, scoreThreshold: 0.4 })).withFaceLandmarks().withFaceDescriptor();
+        if (d) {
+            state.currentDescriptor = d.descriptor;
+            oval.classList.add('valid');
+            btn.disabled = false;
+        } else {
+            oval.classList.remove('valid');
+            btn.disabled = true;
+            requestAnimationFrame(detectRegisterLoop);
         }
     }
 
     function closeRegister() {
-        if(state.stream) state.stream.getTracks().forEach(t => t.stop());[cite: 1, 2]
-        if(state.faceDetectionFrame) cancelAnimationFrame(state.faceDetectionFrame);[cite: 1, 2]
-        state.stream = null; document.getElementById('modal-register').style.display = 'none';[cite: 1, 2]
-        const sel = document.getElementById('select-user'); if(sel) sel.value = "";[cite: 1, 2]
+        if (state.stream) state.stream.getTracks().forEach(t => t.stop());
+        state.stream = null;
+        document.getElementById('modal-register').style.display = 'none';
+        document.getElementById('select-user').value = "";
     }
 
     async function processRegister() {
-        triggerHaptic("confirm"); const b = document.getElementById('btn-reg-save'); if(b) b.disabled = true;[cite: 1, 2]
-        const n = document.getElementById('reg-nama').value.trim(); const ni = document.getElementById('reg-nip').value.trim() || "-";[cite: 1, 2]
-        if (!n) { if(b) b.disabled = false; return showAlert("Gagal", "Data wajib lengkap!"); }[cite: 1, 2]
-        showLoading(true, "Mendaftarkan ke Firebase...");[cite: 1, 2]
+        const n = document.getElementById('reg-nama').value.trim();
+        const ni = document.getElementById('reg-nip').value.trim() || "-";
+        if (!n) return showAlert("Error", "Nama lengkap wajib diisi!");
+
+        showLoading(true, "Mendaftarkan Petugas...");
         try {
-            const key = ni !== "-" ? String(ni).replace(/[.#$\[\]\/]/g, "_") : "user_" + Date.now();
+            const key = ni !== "-" ? ni.replace(/[.#$\[\]\/]/g, "_") : "user_" + Date.now();
             await db.ref(`GARDENA/OFFICERS/${key}`).set({
                 name: n,
-                nip: ni.toString(),
+                nip: ni,
                 faceId: JSON.stringify(Array.from(state.currentDescriptor))
             });
-            showAlert("Berhasil", "Terdaftar!"); closeRegister();[cite: 1, 2]
-        } catch (e) { 
-            showAlert("Error", "Gagal mendaftar: " + e.message); 
-            if(b) b.disabled = false; 
+            showAlert("Berhasil", "Akun berhasil didaftarkan!");
+            closeRegister();
+        } catch(e) {
+            showAlert("Error", "Gagal mendaftar: " + e.message);
         } finally {
             showLoading(false);
         }
     }
 
-    function openDLModal() {
-        triggerHaptic("confirm");[cite: 1, 2]
-        const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');[cite: 1, 2]
-        
-        if (state.data.logs.some(l => l.name === state.user && l.date === today && (l.type === "MASUK" || l.type === "PULANG"))) {[cite: 1, 2]
-            showAlert("Opps", "Sudah melakukan absen rutin hari ini.");[cite: 1, 2]
-            return;[cite: 1, 2]
-        }
-        document.getElementById('modal-dl').style.display = 'flex';[cite: 1, 2]
+    function handleAttendanceTrigger() {
+        startFaceAuth('ABSENSI');
     }
 
-    function closeDLModal() { 
-        document.getElementById('modal-dl').style.display = 'none';[cite: 1, 2]
-        if(document.getElementById('dl-status-tipe')) document.getElementById('dl-status-tipe').value = "";[cite: 1, 2]
-        if(document.getElementById('dl-keterangan')) document.getElementById('dl-keterangan').value = "";[cite: 1, 2]
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));[cite: 1, 2]
-        const a = document.getElementById(`nav-${state.currentView}`); if(a) a.classList.add('active');[cite: 1, 2]
-    }
-    
-    async function processDL() {
-        triggerHaptic("confirm"); [cite: 1, 2]
-        const b = document.getElementById('btn-dl-submit');[cite: 1, 2]
-        if (state.isProcessing) return;[cite: 1, 2]
-
-        const tipeStatus = document.getElementById('dl-status-tipe').value;[cite: 1, 2]
-        const keteranganDetail = document.getElementById('dl-keterangan').value.trim();[cite: 1, 2]
-
-        if (!tipeStatus) return showAlert("Opps", "Silakan pilih jenis status terlebih dahulu!");[cite: 1, 2]
-        if (!keteranganDetail) return showAlert("Opps", "Silakan isi keterangan alasan atau detailnya!");[cite: 1, 2]
-
-        const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');[cite: 1, 2]
-        
-        if (state.data.logs.some(l => l.name === state.user && l.date === today && ["DL", "CUTI", "IJIN", "SAKIT"].includes(l.type))) {[cite: 1, 2]
-            return showAlert("Ditolak", "Hari ini Anda sudah mengajukan status khusus!");[cite: 1, 2]
-        }
-        
-        if(b) b.disabled = true;[cite: 1, 2]
-        
-        navigator.geolocation.getCurrentPosition(
-            (p) => { 
-                state.currentLocation = p;[cite: 1, 2]
-                closeDLModal(); [cite: 1, 2]
-                processAttendanceCustom(tipeStatus, keteranganDetail);[cite: 1, 2]
-            }, 
-            () => { 
-                closeDLModal();[cite: 1, 2]
-                processAttendanceCustom(tipeStatus, keteranganDetail);[cite: 1, 2]
-            }
-        );
-    }
-
-    async function processAttendanceCustom(tipeStatus, noteValue) {
-        if (state.isProcessing) return;[cite: 1, 2]
-        state.isProcessing = true;[cite: 1, 2]
-
+    async function saveAttendanceRecord() {
         const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');
-        const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');[cite: 1, 2]
-        const officer = state.data.descriptors.find(d => d.name === state.user);
-        const nip = officer ? officer.nip : "-";
+        const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');
+        const off = state.data.descriptors.find(d => d.name === state.user);
 
-        const payload = { 
+        const payload = {
             date: today,
-            name: state.user, 
-            time: timeStr, 
-            type: tipeStatus, 
-            status: tipeStatus === "DL" ? "DINAS LUAR" : tipeStatus, 
-            note: noteValue, 
-            nip: nip.toString(),
-            coord: state.currentLocation ? `'${state.currentLocation.coords.latitude},${state.currentLocation.coords.longitude}` : "No-GPS",
-            createdAt: firebase.database.ServerValue.TIMESTAMP
-        };
-
-        showLoading(true, `Mencatat Status ${tipeStatus}...`);[cite: 1, 2]
-        try { 
-            await db.ref('GARDENA/DATA').push(payload);
-            showAlert("Berhasil", `Status ${tipeStatus} Berhasil Dicatat ✨`);[cite: 1, 2]
-        } catch (e) { 
-            showAlert("Error", "Gagal menyimpan ke server.");[cite: 1, 2]
-        } finally { 
-            state.isProcessing = false;[cite: 1, 2]
-            showLoading(false);[cite: 1, 2]
-        }
-    }
-
-    async function processAttendance(m, n = "-") {
-        if (state.isProcessing) return;[cite: 1, 2]
-        state.isProcessing = true;[cite: 1, 2]
-
-        const tc = checkShiftTime();[cite: 1, 2]
-        if (!tc.allow) { [cite: 1, 2]
-            state.isProcessing = false;[cite: 1, 2]
-            showAlert("Ditolak", tc.msg);[cite: 1, 2]
-            return;[cite: 1, 2]
-        }
-
-        const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');[cite: 1, 2]
-        const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');[cite: 1, 2]
-        let t = (m === "DL") ? "DL" : tc.type;[cite: 1, 2]
-
-        let status = "OK";
-        const cfg = state.data.config || {};
-        let jamMasukNormal = "07:15";
-        let jamMasukLimit = cfg.JAM_MASUK_NORMAL || "08:00";
-        let jamMasukAkhir = "09:00";
-        let jamPulangBerlaku = "16:30";
-        let jamPulangSelesai = "18:00";
-
-        if (cfg.SHIFT_DATA) {
-            try {
-                const shift = typeof cfg.SHIFT_DATA === 'string' ? JSON.parse(cfg.SHIFT_DATA) : cfg.SHIFT_DATA;
-                const isFriday = (new Date().getDay() === 5);
-                const data = isFriday ? shift.fri : shift.reg;
-                if(data) {
-                    jamMasukNormal = data.inStart;
-                    jamMasukLimit = data.inOnTime || data.inLate;
-                    jamMasukAkhir = data.inLate;
-                    jamPulangBerlaku = data.outStart;
-                    jamPulangSelesai = data.outEnd;
-                }
-            } catch(e){}
-        }
-
-        if (t === "MASUK") {
-            if (timeStr < jamMasukNormal) status = "TERLALU AWAL";
-            else if (timeStr <= jamMasukLimit) status = "TEPAT WAKTU";
-            else if (timeStr <= jamMasukAkhir) status = "TERLAMBAT";
-            else status = "SANGAT TERLAMBAT";
-        } else if (t === "PULANG") {
-            if (timeStr < jamPulangBerlaku) status = "PULANG AWAL";
-            else if (timeStr > jamPulangSelesai) status = "PULANG TERLAMBAT";
-            else status = "OK";
-        }
-
-        const officer = state.data.descriptors.find(d => d.name === state.user);
-        const nip = officer ? officer.nip : "-";
-
-        const payload = { 
-            date: today,
-            name: state.user, 
+            name: state.user,
             time: timeStr,
-            type: t, 
-            status: status, 
-            note: n, 
-            nip: nip.toString(),
-            coord: state.currentLocation ? `'${state.currentLocation.coords.latitude},${state.currentLocation.coords.longitude}` : "No-GPS",
-            createdAt: firebase.database.ServerValue.TIMESTAMP
+            type: timeStr <= "12:00" ? "MASUK" : "PULANG",
+            status: "TEPAT WAKTU",
+            note: "-",
+            nip: off ? off.nip : "-",
+            coord: "Online-App"
         };
 
-        showLoading(true, `Mencatat ${t}...`);[cite: 1, 2]
-        try { 
+        showLoading(true, "Mencatat Presensi...");
+        try {
             await db.ref('GARDENA/DATA').push(payload);
-            showAlert("Berhasil", `${t} Dicatat ✨`);[cite: 1, 2]
-        } catch (e) { 
-            showAlert("Error", "Gagal menyimpan.");[cite: 1, 2]
-        } finally { 
-            state.isProcessing = false;[cite: 1, 2]
-            showLoading(false);[cite: 1, 2]
+            showAlert("Sukses", "Presensi berhasil dicatat!");
+        } catch(e) {
+            showAlert("Error", "Gagal mengirim data.");
+        } finally {
+            showLoading(false);
         }
     }
 
-    function renderDailyLog() {
-        const c = document.getElementById('daily-log-container'); const m = document.getElementById('home-ket-masuk'); const p = document.getElementById('home-ket-pulang');[cite: 1, 2]
-        const rm = document.getElementById('ring-masuk'); const rp = document.getElementById('ring-pulang');[cite: 1, 2]
-        if(!c) return; if (state.isRefreshing) { c.innerHTML = `<div class="skeleton skeleton-log"></div>`; return; }[cite: 1, 2]
-        const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Makassar' }).replace(/\./g, '/');[cite: 1, 2]
-        const logs = state.data.logs.filter(l => l.name === state.user);[cite: 1, 2]
-        const lastDate = [...new Set(logs.map(l => l.date))].sort((a, b) => { const da = a.split('/'); const db = b.split('/'); return new Date(db[2], db[1]-1, db[0]) - new Date(da[2], da[1]-1, da[0]); })[0];[cite: 1, 2]
-        const displayLogs = logs.filter(l => l.date === lastDate);[cite: 1, 2]
-        if(m) m.innerText = "--:--"; if(p) p.innerText = "--:--"; if(rm) rm.classList.remove('ring-active'); if(rp) rp.classList.remove('ring-active');[cite: 1, 2]
-        if (displayLogs.length > 0) {[cite: 1, 2]
-            c.innerHTML = displayLogs.map(l => {[cite: 1, 2]
-                const ft = formatTimeFix(l.time);[cite: 1, 2]
-                if(lastDate === today) {[cite: 1, 2]
-                    const statusKhusus = ["DL", "CUTI", "IJIN", "SAKIT"];[cite: 1, 2]
-                    if (l.type === 'MASUK' || statusKhusus.includes(l.type)) {[cite: 1, 2]
-                        if(m) m.innerText = statusKhusus.includes(l.type) ? l.type : ft;[cite: 1, 2]
-                        if(rm) rm.classList.add('ring-active');[cite: 1, 2]
-                    }
-                    if (l.type === 'PULANG' || statusKhusus.includes(l.type)) {[cite: 1, 2]
-                        if(p) p.innerText = statusKhusus.includes(l.type) ? l.type : ft;[cite: 1, 2]
-                        if(rp) rp.classList.add('ring-active');[cite: 1, 2]
-                    }
-                }
-                return `<div class="log-card"><div class="flex items-center gap-3"><div><p class="text-[10px] font-black uppercase">${l.type}</p><p class="text-[8px] text-slate-400 font-bold">${l.date} | ${ft}</p></div></div><span class="text-[7px] font-black px-2 py-1 rounded-lg bg-white border ${l.status?.includes('TERLAMBAT') ? 'text-red-500' : 'text-emerald-500'}">${l.status || 'OK'}</span></div>`;[cite: 1, 2]
-            }).join('');[cite: 1, 2]
-        } else { c.innerHTML = '<div class="text-center py-6 text-[9px] font-bold text-slate-300 uppercase">Belum ada riwayat</div>'; }[cite: 1, 2]
+    function logout() {
+        localStorage.removeItem('gardena_user');
+        state.user = null;
+        showView('login');
     }
 
-    function downloadExcel() {
-        const table = document.getElementById("table-to-download");[cite: 1, 2]
-        const wb = XLSX.utils.table_to_book(table, {sheet: "Riwayat"});[cite: 1, 2]
-        XLSX.writeFile(wb, `Rekap_Presensi_${state.user || "GARDENA"}.xlsx`);[cite: 1, 2]
-    }
-
-    // Eksekusi buka aplikasi tanpa menahan UI
-    window.addEventListener('load', () => { 
-        checkAppVersion();[cite: 1, 2]
-        detectPlatform();[cite: 1, 2]
-        
-        // 1. Matikan Splash Screen langsung
-        setTimeout(() => { 
-            const s = document.getElementById('splash-screen');[cite: 1, 2]
-            if(s) {
-                s.classList.add('fade-out');[cite: 1, 2]
-                setTimeout(() => { s.style.display = 'none'; }, 400);
-            }
-            if(state.user) {
-                showView(state.user === 'ADMIN' ? 'rekap' : 'profile');[cite: 1, 2]
-            }
-        }, 800); 
-
-        // 2. Sambungkan data Firebase
+    // Inisialisasi awal
+    window.addEventListener('load', () => {
         initFirebaseListeners();
+        setTimeout(loadModels, 1000);
 
-        // 3. Pre-load model AI di background secara senyap
-        setTimeout(() => {
-            loadModels();
-        }, 1200);
+        if (state.user) {
+            showView('profile');
+        }
 
-        setInterval(() => { 
-            const c = document.getElementById('clock-display');[cite: 1, 2]
-            if(c) { 
-                c.innerText = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');[cite: 1, 2]
-                if(state.currentView === 'profile') renderShiftInfo();[cite: 1, 2]
-            } 
-        }, 1000);[cite: 1, 2]
-    });    
-
-    window.addEventListener('online', () => { const b = document.getElementById('offline-banner'); if(b) b.style.display = 'none'; });[cite: 1, 2]
-    window.addEventListener('offline', () => { const b = document.getElementById('offline-banner'); if(b) b.style.display = 'block'; });[cite: 1, 2]
+        setInterval(() => {
+            const c = document.getElementById('clock-display');
+            if (c) c.innerText = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Makassar' }).replace('.', ':');
+        }, 1000);
+    });
 </script>
 </body>
 </html>
