@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>GARDENA - Garda Terdepan Nakes Sampanahan</title>
     
-    <!-- FIREBASE SDK COMPAT -->
+    <!-- FIREBASE SDK COMPAT (v9) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -366,7 +366,7 @@
 </div>
 
 <script>
-    // Konfigurasi Firebase Realtime Database
+    // Konfigurasi Firebase Realtime Database Regional Singapura (asia-southeast1)
     const firebaseConfig = {
       apiKey: "AIzaSyACFiHVAuYvWl_q02agK4PFB2gZ8hLwr_A",
       authDomain: "gardena-4a8b1.firebaseapp.com",
@@ -406,17 +406,30 @@
         document.getElementById('loading-overlay').classList.toggle('hidden', !show);
     }
 
+    // Load AI Weights dengan CDN Cepat & Fallback
+    const MODEL_URL = 'https://cdn.jsdelivr.net/gh/cgarciagl/face-api.js@master/weights';
     async function loadModels() {
         if (state.modelsLoaded) return;
         try {
-            const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
             await Promise.all([
                 faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
                 faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
                 faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
             ]);
             state.modelsLoaded = true;
-        } catch(e) { console.error("Face-API Model load error:", e); }
+        } catch(e) {
+            try {
+                const FALLBACK_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+                await Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri(FALLBACK_URL),
+                    faceapi.nets.faceLandmark68Net.loadFromUri(FALLBACK_URL),
+                    faceapi.nets.faceRecognitionNet.loadFromUri(FALLBACK_URL)
+                ]);
+                state.modelsLoaded = true;
+            } catch(err) {
+                console.error("Gagal load model AI:", err);
+            }
+        }
     }
 
     function initFirebaseSync() {
@@ -544,13 +557,28 @@
         if (v === 'NEW_REGISTER') openRegister();
     }
 
+    // Kamera Instan dengan Resolusi Ringan
     async function getCameraStream(id) {
         try {
             if (state.stream) state.stream.getTracks().forEach(t => t.stop());
-            state.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            const constraints = {
+                video: {
+                    facingMode: "user",
+                    width: { ideal: 640, max: 640 },
+                    height: { ideal: 480, max: 480 },
+                    frameRate: { ideal: 30, max: 30 }
+                },
+                audio: false
+            };
+            state.stream = await navigator.mediaDevices.getUserMedia(constraints);
             const vid = document.getElementById(id);
             vid.srcObject = state.stream;
-            return true;
+            return new Promise((resolve) => {
+                vid.onloadedmetadata = () => {
+                    vid.play();
+                    resolve(true);
+                };
+            });
         } catch(e) {
             showAlert("Kamera", "Izin kamera diperlukan!");
             return false;
@@ -559,17 +587,22 @@
 
     async function startFaceAuth(mode) {
         state.authMode = mode;
-        if (!state.modelsLoaded) {
-            showLoading(true, "Memuat AI Wajah...");
-            await loadModels();
-            showLoading(false);
-        }
         document.getElementById('modal-face').style.display = 'flex';
-        if (await getCameraStream('video-preview')) {
-            detectFaceLoop();
-        } else {
+        document.getElementById('face-status-text').innerText = "Membuka sensor kamera...";
+
+        const streamReady = await getCameraStream('video-preview');
+        if (!streamReady) {
             closeFaceModal();
+            return;
         }
+
+        if (!state.modelsLoaded) {
+            document.getElementById('face-status-text').innerText = "Memuat modul pendeteksi...";
+            await loadModels();
+        }
+
+        document.getElementById('face-status-text').innerText = "Arahkan wajah ke kamera...";
+        detectFaceLoop();
     }
 
     async function detectFaceLoop() {
@@ -579,7 +612,7 @@
         const oval = document.getElementById('login-oval');
         if (!state.stream || document.getElementById('modal-face').style.display === 'none') return;
 
-        const d = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.4 })).withFaceLandmarks().withFaceDescriptor();
+        const d = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({ inputSize: 128, scoreThreshold: 0.4 })).withFaceLandmarks().withFaceDescriptor();
         if (d) {
             state.currentDescriptor = d.descriptor;
             oval.classList.add('valid');
@@ -596,7 +629,7 @@
     }
 
     async function confirmFaceAuth() {
-        const threshold = 0.5;
+        const threshold = 0.45;
         let matched = null;
         for (const off of state.data.descriptors) {
             if (off.descriptor) {
@@ -633,15 +666,17 @@
     }
 
     async function openRegister() {
-        if (!state.modelsLoaded) {
-            showLoading(true, "Memuat AI Wajah...");
-            await loadModels();
-            showLoading(false);
-        }
         document.getElementById('modal-register').style.display = 'flex';
-        if (await getCameraStream('video-register')) {
-            detectRegisterLoop();
+        const streamReady = await getCameraStream('video-register');
+        if (!streamReady) {
+            closeRegister();
+            return;
         }
+
+        if (!state.modelsLoaded) {
+            await loadModels();
+        }
+        detectRegisterLoop();
     }
 
     async function detectRegisterLoop() {
@@ -650,7 +685,7 @@
         const oval = document.getElementById('reg-oval');
         if (!state.stream || document.getElementById('modal-register').style.display === 'none') return;
 
-        const d = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.4 })).withFaceLandmarks().withFaceDescriptor();
+        const d = await faceapi.detectSingleFace(vid, new faceapi.TinyFaceDetectorOptions({ inputSize: 128, scoreThreshold: 0.4 })).withFaceLandmarks().withFaceDescriptor();
         if (d) {
             state.currentDescriptor = d.descriptor;
             oval.classList.add('valid');
@@ -728,11 +763,12 @@
         showView('login');
     }
 
-    // Auto-Dismiss Splash Screen (Fail-safe)
+    // Inisialisasi awal saat window dimuat
     window.addEventListener('load', () => {
         initFirebaseSync();
         loadModels();
 
+        // Hilangkan splash screen secara pasti setelah 1.2 detik
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
             if (splash) {
@@ -742,7 +778,7 @@
             if (state.user) {
                 showView('profile');
             }
-        }, 1500);
+        }, 1200);
 
         setInterval(() => {
             const c = document.getElementById('clock-display');
